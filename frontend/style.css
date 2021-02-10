@@ -1,0 +1,28 @@
+* {
+  font-family: sans-serif;
+}
+
+h1 {
+  font-size: 1.6rem;
+  color: #456387;
+}
+h2 {
+  font-size: 1rem;
+  color: #555;
+}
+
+.content {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.code {
+  min-width: 240px;
+  background: #A4F3D2;
+}
+
+.demo {
+  min-width: 240px;
+  background: #F3A4D2;
+}
