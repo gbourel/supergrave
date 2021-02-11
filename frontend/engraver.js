@@ -142,6 +142,7 @@
       requestAnimationFrame(engrave);
     } else {
       highlightCmd(null);
+      showStart();
     }
   }
 
@@ -154,15 +155,53 @@
     _mode = "ABS";
   }
 
+  function showStop() {
+    let elt = document.getElementById('run');
+    elt.style.display = 'none';
+    elt = document.getElementById('running');
+    elt.style.display = 'inline-block';
+  }
+  function showStart() {
+    let elt = document.getElementById('running');
+    elt.style.display = 'none';
+    elt = document.getElementById('run');
+    elt.style.display = 'inline-block';
+  }
+
+  // Resize canvas to fit parent size
+  function resizeCanvas() {
+    let parentWidth = canvas.parentElement.offsetWidth;
+    let ratio = H / W;
+    let margin = 16;
+    console.info('parentWidth', parentWidth, width);
+    console.info('computed', ratio, Math.round(parentWidth * ratio));
+    canvas.width = parentWidth - margin;
+    canvas.height = Math.round((parentWidth - margin) * ratio);
+    width = canvas.width;
+    height = canvas.height;
+  }
+
   // starts engraving using editor content as commands
   function start() {
     let editor = document.getElementById("editor")
     let nodes = Array.from(editor.children);
     reinit();
     _commands = nodes.values();
+    showStop();
+    resizeCanvas();
     engrave();
   }
 
+  // Emergency stop engraving
+  function stop() {
+    _laser = false;
+    _commands = null;
+    _dest = null;
+    highlightCmd(null);
+    showStart();
+  }
+
   window.engraverStart = start;
+  window.engraverStop = stop;
   start();
 })();

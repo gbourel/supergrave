@@ -18,8 +18,16 @@
     </header>
     <div class="content">
       <div class="code">
-        <div class="btn run" onclick="engraverStart()">
-          <img src="img/arrow.svg" />
+        <div class="buttons">
+          <div id="run" onclick="engraverStart()">
+            <img src="img/arrow.svg" />
+          </div>
+          <div id="running">
+            <img src="img/engraverAnim.svg" />
+            <div class="stop" onclick="engraverStop()">
+              <img src="img/off.svg" />
+            </div>
+          </div>
         </div>
         <div id="editor" contenteditable="true">
           <div>INIT</div>
@@ -27,13 +35,8 @@
           <div>LASER ON</div>
           <div>MOVE 650 150</div>
           <div>MOVE 650 750</div>
-          <div>MOVE 150 750</div>
-          <div>MOVE 150 150</div>
           <div>LASER OFF</div>
           <div>MOVE 750 150</div>
-        </div>
-        <div class="running">
-        <!-- <img src="img/engraverAnim.svg" /> -->
         </div>
       </div>
       <div class="demo">
