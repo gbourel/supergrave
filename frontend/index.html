@@ -2,22 +2,44 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Daily Dev Tips Boilerplate</title>
-    <meta name="description" content="Basic HTML boilerplate" />
-    <meta name="author" content="Daily Dev Tips" />
+    <title>Decoupe laser</title>
+    <meta name="description" content="Simulateur de découpe laser" />
+    <meta name="author" content="G. Bourel" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Vollkorn:wght@900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css" />
   </head>
 
   <body>
     <header>
-      <h1>Graveur</h1>
+      <img class="logo" src="img/engraver-w.svg" />
+      <h1>Simulateur de découpe laser</h1>
     </header>
     <div class="content">
       <div class="code">
-        <h2>Source code ("B-Code")</h2>
+        <div class="btn run" onclick="engraverStart()">
+          <img src="img/arrow.svg" />
+        </div>
+        <div id="editor" contenteditable="true">
+          <div>INIT</div>
+          <div>MOVE 150 150</div>
+          <div>LASER ON</div>
+          <div>MOVE 650 150</div>
+          <div>MOVE 650 750</div>
+          <div>MOVE 150 750</div>
+          <div>MOVE 150 150</div>
+          <div>LASER OFF</div>
+          <div>MOVE 750 150</div>
+        </div>
+        <div class="running">
+        <!-- <img src="img/engraverAnim.svg" /> -->
+        </div>
       </div>
-      <div class="demo">Demo</div>
+      <div class="demo">
+        <canvas id=engraver width="305" height="153">
+        </canvas>
+      </div>
     </div>
     <script src="engraver.js"></script>
   </body>

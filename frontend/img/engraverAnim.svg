@@ -22,7 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -56,7 +56,7 @@
      id="namedview61"
      showgrid="false"
      inkscape:zoom="1.3037281"
-     inkscape:cx="71.785618"
+     inkscape:cx="247.43574"
      inkscape:cy="325.80784"
      inkscape:window-x="0"
      inkscape:window-y="27"
@@ -176,6 +176,12 @@
   </g>
   <g
      id="laser">
+    <animateTransform attributeName="transform"
+                      attributeType="XML"
+                      type="translate"
+                      values="-7;3;-7"
+                      dur="8s"
+                      repeatCount="indefinite"/>
     <path
        style="color:#000000;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:medium;line-height:normal;font-family:sans-serif;font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration:none;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;clip-rule:nonzero;display:inline;overflow:visible;visibility:visible;opacity:1;isolation:auto;mix-blend-mode:normal;color-interpolation:sRGB;color-interpolation-filters:linearRGB;solid-color:#000000;solid-opacity:1;vector-effect:none;fill:#001aef;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1.34765625;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;filter:url(#filter1049);color-rendering:auto;image-rendering:auto;shape-rendering:auto;text-rendering:auto;enable-background:accumulate"
        d="M 43.990234,25.316406 A 0.67389551,0.67389551 0 0 0 43.326172,26 v 11.078125 a 0.67389551,0.67389551 0 1 0 1.347656,0 V 26 a 0.67389551,0.67389551 0 0 0 -0.683594,-0.683594 z"
@@ -214,7 +220,13 @@
   </g>
   <g
      id="head"
-     transform="translate(-46.875)">
+     transform="translate(-42.875)">
+    <animateTransform attributeName="transform"
+                      attributeType="XML"
+                      type="translate"
+                      values="-54;-44;-54"
+                      dur="8s"
+                      repeatCount="indefinite"/>
     <g
        transform="translate(46.875)"
        id="g1076">
@@ -242,21 +254,15 @@
        sodipodi:nodetypes="ccsscccccsscccccccccccccc" />
   </g>
   <path
+     id="cable"
      style="fill:none;stroke:#000000;stroke-width:1.640625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
      d="m 27.083893,6.7872185 c 5.465006,0.048137 9.540208,-5.94738308 13.193991,-5.9325061 3.653783,0.014877 3.73837,3.1545509 3.73837,5.3691389"
-     id="cable"
      inkscape:connector-curvature="0"
-     sodipodi:nodetypes="czc" />
-  <path
-     sodipodi:nodetypes="czc"
-     inkscape:connector-curvature="0"
-     id="cableMin"
-     d="m 27.083893,6.7872185 c 5.465006,0.048137 2.977708,-5.94738308 6.631491,-5.9325061 3.653783,0.014877 3.26962,3.1545509 3.26962,5.3691389"
-     style="fill:none;stroke:#000000;stroke-width:1.640625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
-  <path
-     style="fill:none;stroke:#000000;stroke-width:1.640625;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     d="m 27.083893,6.7872185 c 5.465006,0.048137 13.524583,-5.94738308 17.178366,-5.9325061 3.653783,0.014877 4.20712,3.1545509 4.20712,5.3691389"
-     id="cableMax"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="czc" />
+     sodipodi:nodetypes="czc"/>
+  <animate href="#cable"
+          attributeType="XML"
+          attributeName="d"
+          values="m 27.083893,6.7872185 c 5.465006,0.048137 2.977708,-5.94738308 6.631491,-5.9325061 3.653783,0.014877 3.26962,3.1545509 3.26962,5.3691389;m 27.083893,6.7872185 c 5.465006,0.048137 11.524583,-5.94738308 15.178366,-5.9325061 3.653783,0.014877 4.20712,3.1545509 4.20712,5.3691389;m 27.083893,6.7872185 c 5.465006,0.048137 2.977708,-5.94738308 6.631491,-5.9325061 3.653783,0.014877 3.26962,3.1545509 3.26962,5.3691389"
+          dur="8s"
+          repeatCount="indefinite"/>
 </svg>

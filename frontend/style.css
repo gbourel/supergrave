@@ -1,11 +1,49 @@
 * {
-  font-family: sans-serif;
+  font-family: 'Lato', sans-serif;
 }
 
-h1 {
-  font-size: 1.6rem;
-  color: #456387;
+html {
+  background: url("img/background-s.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  height: 100%;
+  margin: 0;
 }
+body {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0;
+}
+
+header {
+  display: flex;
+  background: #26262680;
+  margin: 0.5rem;
+  padding: 0.2rem;
+  border-radius: 1rem;
+}
+h1 {
+  font-family: 'Vollkorn', serif;
+  font-size: 1.6rem;
+  letter-spacing: 0.1rem;
+  color: #F2F2F2;
+}
+.logo {
+  width: 2rem;
+  padding: 0 1rem 0 0.5rem;
+}
+@media (max-width: 512px) {
+  h1 {
+    font-size: 1.1rem;
+  }
+  .logo {
+    width: 1.4rem;
+  }
+}
+
 h2 {
   font-size: 1rem;
   color: #555;
@@ -13,16 +51,64 @@ h2 {
 
 .content {
   display: flex;
+  flex-grow: 1;
+  margin-bottom: 1rem;
   flex-wrap: wrap;
   justify-content: space-around;
 }
 
-.code {
+.code, .demo {
   min-width: 240px;
-  background: #A4F3D2;
+  flex-grow: 1;
+  margin: 0 0.5rem;
+  border-radius: 0.4rem;
+}
+
+.code {
+  position: relative;
+  flex-grow: 1;
+  background: #262626;
+  color: #DDD;
+  padding: 0;
+}
+#editor {
+  width: 90%;
+  height: 90%;
+  overflow-y: auto;
+  margin: 5%;
+  outline: none;
+}
+.running {
+  width: 14rem;
 }
 
 .demo {
-  min-width: 240px;
-  background: #F3A4D2;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-grow: 1;
+  background: #FAFAFA;
+}
+#engraver {
+}
+.btn img {
+  width: 24px;
+}
+.btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: #60a33c;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  display: inline-block;
+  border: none;
+  transition: all 0.4s ease 0s;
+}
+.btn:hover {
+  text-shadow: 0px 0px 6px rgba(255, 255, 255, 1);
+  -webkit-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  -moz-box-shadow: 0px 5px 40px -10px rgba(0,0,0,0.57);
+  transition: all 0.4s ease 0s;
+  background: #30832c;
 }
