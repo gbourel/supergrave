@@ -96,6 +96,13 @@
     }
   }
 
+  // display error msg
+  function error(msg) {
+    let elt = document.getElementById('error');
+    elt.innerText = msg;
+    elt.style.display = 'inline-block';
+  }
+
   // parse commands and display engraving
   function engrave() {
     let running = true;
@@ -133,7 +140,7 @@
           highlightCmd(e);
         } else {
           console.error('Unknown command', _cmd);
-          // TODO error
+          error('Erreur commande : \n' + _cmd);
         }
       }
     }
@@ -166,17 +173,24 @@
     elt.style.display = 'none';
     elt = document.getElementById('run');
     elt.style.display = 'inline-block';
+    elt = document.getElementById('error');
+    elt.style.display = 'none';
   }
 
   // Resize canvas to fit parent size
   function resizeCanvas() {
     let parentWidth = canvas.parentElement.offsetWidth;
+    let parentHeight = canvas.parentElement.offsetHeight;
     let ratio = H / W;
     let margin = 16;
-    console.info('parentWidth', parentWidth, width);
-    console.info('computed', ratio, Math.round(parentWidth * ratio));
-    canvas.width = parentWidth - margin;
-    canvas.height = Math.round((parentWidth - margin) * ratio);
+    let targetWidth = parentWidth - margin;
+    let targetHeight = Math.round(targetWidth * ratio);
+    if(targetHeight > parentHeight) {
+      targetHeight = parentHeight - margin;
+      targetWidth = Math.round(targetHeight / ratio);
+    }
+    canvas.width = targetWidth;
+    canvas.height = targetHeight;
     width = canvas.width;
     height = canvas.height;
   }

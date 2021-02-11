@@ -38,7 +38,7 @@ h1 {
 }
 @media (max-width: 512px) {
   h1 {
-    font-size: 1.1rem;
+    font-size: 1.0rem;
   }
   .logo {
     width: 1.4rem;
@@ -92,6 +92,15 @@ h2 {
   justify-content: space-around;
   flex-grow: 4;
   background: #FAFAFA;
+}
+#error {
+  display: none;
+  position: absolute;
+  text-align: center;
+  background: #DD3333;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  color: #eee;
 }
 
 .buttons {
