@@ -68,7 +68,6 @@
         let dx = _dest[0] - _pos[0];
         let dy = _dest[1] - _pos[1];
         let length = Math.sqrt(dx*dx + dy*dy);
-        // console.info(length);
         if(length < _speed) {
           _pos[0] = _dest[0];
           _pos[1] = _dest[1];
@@ -86,6 +85,17 @@
     }
   }
 
+  // highlight command
+  function highlightCmd(elt) {
+    let highlighted = Array.from(document.querySelectorAll('.current'));
+    highlighted.forEach(e => {
+      e.classList.remove('current');
+    })
+    if(elt) {
+      elt.classList.add('current');
+    }
+  }
+
   // parse commands and display engraving
   function engrave() {
     let running = true;
@@ -100,6 +110,7 @@
         if (_cmd === 'INIT') {
           _pos = [0, 0];
           _cmd = null;
+          highlightCmd(e);
         } else if (res = _cmd.match(/MOVE\s+(\d+)\s+(\d+)/)) {
           let x = parseInt(res[1]);
           let y = parseInt(res[2]);
@@ -111,12 +122,15 @@
           if(_laser) {
             _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
           }
+          highlightCmd(e);
         } else if (res = _cmd.match(/LASER\s+(ON|OFF)/)) {
           _laser = res[1] === 'ON';
           _cmd = null;
+          highlightCmd(e);
         } else if (res = _cmd.match(/MODE\s+(ABS|REL)/)) {
           _mode = res[1];
           _cmd = null;
+          highlightCmd(e);
         } else {
           console.error('Unknown command', _cmd);
           // TODO error
@@ -126,6 +140,8 @@
     draw();
     if(running) {
       requestAnimationFrame(engrave);
+    } else {
+      highlightCmd(null);
     }
   }
 

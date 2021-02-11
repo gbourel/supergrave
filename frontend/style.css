@@ -81,6 +81,12 @@ h2 {
 .running {
   width: 14rem;
 }
+.current {
+  color: #D22;
+  font-weight: bold;
+  font-size: large;
+  letter-spacing: 0.05rem;
+}
 
 .demo {
   display: flex;
