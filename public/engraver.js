@@ -113,7 +113,7 @@
       } else {
         _cmd = e.innerText.trim();
         let res = null;
-        console.info(_cmd);
+        console.info('COMMAND:', _cmd);
         if (_cmd === 'INIT') {
           _pos = [0, 0];
           _cmd = null;
@@ -139,8 +139,13 @@
           _cmd = null;
           highlightCmd(e);
         } else {
-          console.error('Unknown command', _cmd);
-          error('Erreur commande : \n' + _cmd);
+          if(_cmd === '') {
+            _cmd = null;
+            highlightCmd(null);
+          } else {
+            console.error('Unknown command', _cmd);
+            error('Erreur commande : \n' + _cmd);
+          }
         }
       }
     }
