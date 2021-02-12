@@ -202,9 +202,14 @@
 
   // starts engraving using editor content as commands
   function start() {
-    let editor = document.getElementById("editor")
-    let nodes = Array.from(editor.children);
     reinit();
+    let editor = document.getElementById("editor")
+    // get nodes children of editor
+    let nodes = Array.from(editor.children);
+    // while another parent div is found inside
+    while(nodes.length == 1 && nodes[0].children.length) {
+      nodes = Array.from(nodes[0].children);
+    }
     _commands = nodes.values();
     showStop();
     resizeCanvas();
