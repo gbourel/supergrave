@@ -8,8 +8,8 @@
   let _laser = false;     // if laser is on
   let _lines = [];
 
-  let height = canvas.height;
-  let width = canvas.width;
+  let _height = canvas.height;
+  let _width = canvas.width;
 
   let _speed = 5;
 
@@ -18,13 +18,13 @@
 
   // convert x from mm to canvas x
   function convertX(mm) {
-    let x = (mm / 3050.0) * width;
+    let x = (mm / 3050.0) * _width;
     return x;
   }
 
   // convert y from mm to canvas y
   function convertY(mm) {
-    let y = ((H - mm) / 1530.0) * height;
+    let y = ((H - mm) / 1530.0) * _height;
     return y;
   }
 
@@ -35,7 +35,7 @@
 
       // clear canvas
       ctx.fillStyle = 'rgb(150,150,150)';
-      ctx.fillRect(0, 0, width, height);
+      ctx.fillRect(0, 0, _width, _height);
 
       // draw engraved lines
       _lines.forEach(l => {
@@ -191,8 +191,8 @@
     }
     canvas.width = targetWidth;
     canvas.height = targetHeight;
-    width = canvas.width;
-    height = canvas.height;
+    _width = canvas.width;
+    _height = canvas.height;
   }
 
   // starts engraving using editor content as commands
