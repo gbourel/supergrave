@@ -217,5 +217,5 @@
 
   window.engraverStart = start;
   window.engraverStop = stop;
-  start();
+  // start();
 })();
