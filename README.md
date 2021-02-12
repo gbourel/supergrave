@@ -2,6 +2,8 @@
 
 Simulateur de graveur laser 2D.
 
+Démo ici : <https://gbourel.frama.io/supergrave/>
+
 ## Développement
 
 Page HTML statique.
