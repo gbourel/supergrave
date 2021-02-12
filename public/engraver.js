@@ -182,6 +182,17 @@
     elt.style.display = 'none';
   }
 
+  // recursively append children to nodes array
+  function appendChildren(nodes, elt){
+    for(const child of elt.children) {
+      if(child.children && child.children.length > 0) {
+        appendChildren(nodes, child);
+      } else {
+        nodes.push(child);
+      }
+    }
+  }
+
   // Resize canvas to fit parent size
   function resizeCanvas() {
     let parentWidth = canvas.parentElement.offsetWidth;
@@ -202,17 +213,10 @@
 
   // starts engraving using editor content as commands
   function start() {
-    let editor = document.getElementById("editor")
-    let nodes = null;
     reinit();
-    // flatten editor children nodes
-    for (let i = 0; i < editor.children.length; i++) {
-      let elt = editor.children[i];
-      for (let child of elt.children) {
-        editor.appendChild(child);
-      }
-    }
-    nodes = Array.from(editor.children);
+    let editor = document.getElementById("editor")
+    let nodes = [];
+    appendChildren(nodes, editor);
     _commands = nodes.values();
     showStop();
     resizeCanvas();
