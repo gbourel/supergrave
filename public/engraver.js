@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.2.0';
+  const VERSION = 'v0.2.1';
   const H_mm = 1530;
   const W_mm = 3050;
 
@@ -199,11 +199,26 @@
 
   // recursively append children to nodes array
   function appendChildren(nodes, elt){
-    for(const child of elt.children) {
-      if(child.children && child.children.length > 0) {
-        appendChildren(nodes, child);
+    for(const child of elt.childNodes) {
+      // replace text nodes with span (useful for highlighting)
+      if(child.nodeType === Node.TEXT_NODE) {
+        let span = document.createElement('span');
+        span.innerText = child.textContent;
+        elt.replaceChild(span, child);
+        nodes.push(span);
+      } else if(child.nodeType === Node.ELEMENT_NODE) {
+        if(child.children && child.children.length > 0
+           && !(child.children.length === 1
+                && child.children[0].nodeName === 'BR')) {
+          appendChildren(nodes, child);
+        } else {
+          // skips BR tags
+          if(child.nodeName !== 'BR'){
+            nodes.push(child);
+          }
+        }
       } else {
-        nodes.push(child);
+        console.warn('Unknown node type', child);
       }
     }
   }
