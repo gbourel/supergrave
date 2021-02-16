@@ -5,26 +5,29 @@
   let _mode = 'ABS';     // current mode ABS or REL
   let _pos = null;       // current pos
   let _dest = null;      // current destination
-  let _laser = false;     // if laser is on
+  let _laser = false;    // if laser is on
+  let _hipre = false;    // if high precision is on
   let _lines = [];
 
   let _height = canvas.height;
   let _width = canvas.width;
 
-  let _speed = 5;
+  let _speed = 500;
 
-  const H = 1530;
-  const W = 3050;
+  const H_mm = 1530;
+  const W_mm = 3050;
 
-  // convert x from mm to canvas x
+  // convert x from mm/100 to canvas x
   function convertX(mm) {
-    let x = (mm / 3050.0) * _width;
+    let total = W_mm * 100;
+    let x = (mm / total) * _width;
     return x;
   }
 
-  // convert y from mm to canvas y
+  // convert y from mm/100 to canvas y
   function convertY(mm) {
-    let y = ((H - mm) / 1530.0) * _height;
+    let total = H_mm * 100;
+    let y = ((total - mm) / total) * _height;
     return y;
   }
 
@@ -122,6 +125,10 @@
         } else if (res = _cmd.match(/MOVE\s+(\d+)\s+(\d+)/)) {
           let x = parseInt(res[1]);
           let y = parseInt(res[2]);
+          if(!_hipre) {
+            x *= 100;
+            y *= 100;
+          }
           if(_mode === 'REL') {
             x += _pos[0];
             y += _pos[1];
@@ -139,6 +146,9 @@
           _mode = res[1];
           _cmd = null;
           highlightCmd(e);
+        } else if (res = _cmd.match(/HIPRE\s+(ON|OFF)/)) {
+          _hipre = res[1] === 'ON';
+          _cmd = null;
         } else {
           if(_cmd === '') {
             _cmd = null;
@@ -198,7 +208,7 @@
   function resizeCanvas() {
     let parentWidth = canvas.parentElement.offsetWidth;
     let parentHeight = canvas.parentElement.offsetHeight;
-    let ratio = H / W;
+    let ratio = H_mm / W_mm;
     let margin = 16;
     let targetWidth = parentWidth - margin;
     let targetHeight = Math.round(targetWidth * ratio);
