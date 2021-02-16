@@ -25,6 +25,14 @@ header {
   padding: 0.2rem;
   border-radius: 1rem;
 }
+#version {
+  position: absolute;
+  top: 0.8 rem;
+  right: 1.5rem;
+  color: #BBB;
+  font-size: 0.8rem;
+  font-style: italic;
+}
 h1 {
   font-family: 'Vollkorn', serif;
   font-size: 1.6rem;
@@ -42,6 +50,9 @@ h1 {
   }
   .logo {
     width: 1.4rem;
+  }
+  #version {
+    font-size: 0.6rem;
   }
 }
 

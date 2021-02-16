@@ -1,4 +1,8 @@
 (function (){
+  const VERSION = 'v0.2.0';
+  const H_mm = 1530;
+  const W_mm = 3050;
+
   let canvas = document.getElementById('engraver');
   let _commands = null;  // list of commands
   let _cmd = null;       // current action
@@ -14,8 +18,8 @@
 
   let _speed = 500;
 
-  const H_mm = 1530;
-  const W_mm = 3050;
+  // display current version
+  document.getElementById('version').textContent = VERSION;
 
   // convert x from mm/100 to canvas x
   function convertX(mm) {
