@@ -1,30 +1,31 @@
-# Basic test which draws a rectangle, a line and a circle
+# Basic test for high precision mode
 
 import math
 
 # Initialisation
 print("INIT")
-print("MOVE 150 150")
+print("HIPRE ON")
+print("MOVE 15000 15000")
 
 # Grave un rectangle
 print("LASER ON")
-print("MOVE 650 150")
-print("MOVE 650 750")
-print("MOVE 150 750")
-print("MOVE 150 150")
+print("MOVE 65000 15000")
+print("MOVE 65000 75000")
+print("MOVE 15000 75000")
+print("MOVE 15000 15000")
 print("LASER OFF")
 
 # Test du mode relatif
-print("MOVE 750 150")
+print("MOVE 75000 15000")
 print("LASER ON")
 print("MODE REL")
-print("MOVE 200 500")
+print("MOVE 20000 50000")
 print("LASER OFF")
 print("MODE ABS")
 
 # Grave un cercle
-center = (1500, 500)
-radius = 250
+center = (150000, 50000)
+radius = 25000
 steps = 24
 
 for i in range(steps + 1):
