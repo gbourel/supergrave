@@ -12,6 +12,7 @@
   let _laser = false;    // if laser is on
   let _hipre = false;    // if high precision is on
   let _lines = [];
+  let _first = false;    // if first point, force draw (even if distance if short)
 
   let _height = canvas.height;
   let _width = canvas.width;
@@ -78,6 +79,9 @@
         if(length < _speed) {
           _pos[0] = _dest[0];
           _pos[1] = _dest[1];
+          if(_first) {
+            _lines[_lines.length-1][1] = [_pos[0], _pos[1]];
+          }
           _dest = null;
           _cmd = null;
         } else {
@@ -88,6 +92,7 @@
             _lines[_lines.length-1][1] = [_pos[0], _pos[1]];
           }
         }
+        _first = false;
       }
     }
   }
@@ -139,6 +144,7 @@
           }
           _dest = [x, y];
           if(_laser) {
+            _first = true;
             _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
           }
           highlightCmd(e);
