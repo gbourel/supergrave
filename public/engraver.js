@@ -129,6 +129,7 @@
         if (_cmd === 'INIT') {
           _pos = [0, 0];
           _laser = false;
+          _hipre = false;
           _cmd = null;
           highlightCmd(e);
         } else if (res = _cmd.match(/MOVE\s+(\d+)\s+(\d+)/)) {
