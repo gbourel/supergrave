@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.2.1';
+  const VERSION = 'v0.2.2';
   const H_mm = 1530;
   const W_mm = 3050;
 
@@ -216,8 +216,19 @@
           appendChildren(nodes, child);
         } else {
           // skips BR tags
-          if(child.nodeName !== 'BR'){
-            nodes.push(child);
+          if(child.nodeName !== 'BR' && child.innerText){
+            let commands = child.innerText.split('\n');
+            // if multiple commands, split them
+            if(commands && commands.length > 1) {
+              elt.removeChild(child);
+              commands.forEach(c => {
+                let div = document.createElement('div');
+                div.innerText = c;
+                elt.appendChild(div);
+              });
+            } else {
+              nodes.push(child);
+            }
           }
         }
       } else {
