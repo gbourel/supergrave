@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.2.2';
+  const VERSION = 'v0.3.0';
   const H_mm = 1530;
   const W_mm = 3050;
 
