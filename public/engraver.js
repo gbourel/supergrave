@@ -202,10 +202,13 @@
     for(const child of elt.childNodes) {
       // replace text nodes with span (useful for highlighting)
       if(child.nodeType === Node.TEXT_NODE) {
-        let span = document.createElement('span');
-        span.innerText = child.textContent;
-        elt.replaceChild(span, child);
-        nodes.push(span);
+        // if text isn't empty
+        if(child.textContent && child.textContent.trim() !== '') {
+          let span = document.createElement('span');
+          span.innerText = child.textContent;
+          elt.replaceChild(span, child);
+          nodes.push(span);
+        }
       } else if(child.nodeType === Node.ELEMENT_NODE) {
         if(child.children && child.children.length > 0
            && !(child.children.length === 1
