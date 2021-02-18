@@ -283,6 +283,31 @@
     showStart();
   }
 
+  // load program from URL if provided
+  // query parameter must replace line breaks with pipes (%7C)
+  let purl = new URL(window.location.href);
+  if(purl && purl.searchParams) {
+    let p = purl.searchParams.get("program");
+    if(p && p.length) {
+      let editor = document.getElementById('editor')
+      let commands = p.split('|');
+      if(commands && commands.length) {
+        editor.innerHTML = '';
+        commands.forEach(cmd => {
+          let div = document.createElement('div');
+          div.innerText = cmd;
+          editor.appendChild(div);
+        });
+      } else {
+        console.warn('Invalid program URL parameter', p);
+      }
+    }
+    let autostart = purl.searchParams.get("autostart")
+    if(autostart !== null) {
+      start();
+    }
+  }
+
   window.engraverStart = start;
   window.engraverStop = stop;
   // start();
