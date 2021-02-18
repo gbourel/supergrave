@@ -143,12 +143,20 @@
             x += _pos[0];
             y += _pos[1];
           }
-          _dest = [x, y];
-          if(_laser) {
-            _first = true;
-            _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
+          if(x < 0 || x > W_mm*100) {
+            let val = _hipre ? x : Math.round(x/100);
+            error('Coordonnée en x invalide : \n' + val);
+          } else if(y < 0 || y > H_mm*100) {
+            let val = _hipre ? y : Math.round(y/100);
+            error('Coordonnée en y invalide : \n' + val);
+          } else {
+            _dest = [x, y];
+            if(_laser) {
+              _first = true;
+              _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
+            }
+            highlightCmd(e);
           }
-          highlightCmd(e);
         } else if (res = _cmd.match(/LASER\s+(ON|OFF)/)) {
           _laser = res[1] === 'ON';
           _cmd = null;
