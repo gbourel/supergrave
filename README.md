@@ -6,6 +6,7 @@ Démo ici : <https://gbourel.frama.io/supergrave/>
 
 ## Versions
 
+ * v0.3.1 : ajout du compteur de vues de la page
  * v0.3.0 : amplitude des coordonnées et paramètres de l'URL
    - erreur lors de l'utilisation de coordonnées en dehors des limites
    - permet l'utilisation de programmes avec des mouvements précis (très petite distance entre points)

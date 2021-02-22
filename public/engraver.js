@@ -316,18 +316,9 @@
     }
   }
 
-  // Count page view
+  // Page view counter
   fetch('https://hitcounter.ileauxsciences.fr/hit/', {
-    method: 'POST',
-    body: JSON.stringify({
-      'host': window.location.host,
-      'pathname': window.location.pathname,
-      'userAgent': navigator.userAgent
-    }),
-    headers: {
-      'Content-type': 'application/json; charset=UTF-8'
-    }
-  });
+    method: 'POST' });
 
   window.engraverStart = start;
   window.engraverStop = stop;
