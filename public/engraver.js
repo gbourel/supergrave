@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.3.0';
+  const VERSION = 'v0.3.1';
   const H_mm = 1530;
   const W_mm = 3050;
 
@@ -315,6 +315,19 @@
       start();
     }
   }
+
+  // Count page view
+  fetch('https://hitcounter.ileauxsciences.fr/hit/', {
+    method: 'POST',
+    body: JSON.stringify({
+      'host': window.location.host,
+      'pathname': window.location.pathname,
+      'userAgent': navigator.userAgent
+    }),
+    headers: {
+      'Content-type': 'application/json; charset=UTF-8'
+    }
+  });
 
   window.engraverStart = start;
   window.engraverStop = stop;
