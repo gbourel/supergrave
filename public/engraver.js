@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.4.0';
+  const VERSION = 'v0.4.1';
   const H_mm = 1530;
   const W_mm = 3050;
   const SIM_R = 5;
@@ -368,6 +368,12 @@
     ],
     hex: '80bfa427dff9cb3f10cc1c260c9ad904aef4367d'
   };
+
+  // if in iframe
+  if ( window.location !== window.parent.location ) {
+    let elt = document.getElementById('title-header');
+    elt.style.display = 'none';
+  }
 
   // load program from URL if provided
   // query parameter must replace line breaks with pipes (%7C)
