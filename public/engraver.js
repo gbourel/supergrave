@@ -2,6 +2,9 @@
   const VERSION = 'v0.3.1';
   const H_mm = 1530;
   const W_mm = 3050;
+  const SIM_R = 5;
+  const SIM_H = H_mm / SIM_R;
+  const SIM_W = W_mm / SIM_R;
 
   let canvas = document.getElementById('engraver');
   let _commands = null;  // list of commands
@@ -12,12 +15,17 @@
   let _laser = false;    // if laser is on
   let _hipre = false;    // if high precision is on
   let _lines = [];
-  let _first = false;    // if first point, force draw (even if distance if short)
+  let _first = false;    // if first point, force draw (fix for small distances)
 
   let _height = canvas.height;
   let _width = canvas.width;
 
   let _speed = 500;
+
+  // This object contains predefined exercise (may be use with nsix/pix)
+  let _exercises = {};
+  let _exercise = null;   // current exercise if any
+  let _checkImage = null; // image use to check exercise completion
 
   // display current version
   document.getElementById('version').textContent = VERSION;
@@ -115,6 +123,30 @@
     elt.style.display = 'inline-block';
   }
 
+  function simulateLine(start, end, img) {
+    let deltax = (end[0] - start[0]) / (SIM_R * 100);
+    let deltay = (end[1] - start[1]) / (SIM_R * 100);
+    let x = start[0] / (SIM_R * 100);
+    let y = start[1] / (SIM_R * 100);
+    if (Math.abs(deltax) > 0) {
+      let dy = deltay / Math.abs(deltax);
+      for(let i = 0; i < Math.abs(deltax); i++) {
+        img.data[((y * (SIM_W * 4)) + (x * 4))] = 200; // Red
+        img.data[((y * (SIM_W * 4)) + (x * 4)) + 3] = 255; // Alpha
+        x += deltax > 0 ? 1 : -1;
+        y += dy;
+      }
+    } else if (Math.abs(deltay) > 0) { // vertical line
+      for(let i = 0; i < Math.abs(deltay); i++) {
+        let dx = deltax / Math.abs(deltay);
+        img.data[((y * (SIM_W * 4)) + (x * 4))] = 200; // Red
+        img.data[((y * (SIM_W * 4)) + (x * 4)) + 3] = 255; // Alpha
+        x += dx;
+        y += deltay > 0 ? 1 : -1;
+      }
+    }
+  }
+
   // parse commands and display engraving
   function engrave() {
     let running = true;
@@ -154,6 +186,7 @@
             if(_laser) {
               _first = true;
               _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
+              if(_checkImage) { simulateLine(_pos, _dest, _checkImage); }
             }
             highlightCmd(e);
           }
@@ -185,6 +218,19 @@
     } else {
       highlightCmd(null);
       showStart();
+      // Check exercise result on completion
+      if (_exercise) {
+        // const ctx = canvas.getContext('2d');
+        // ctx.putImageData(_checkImage, 0, 0);
+        crypto.subtle.digest('SHA-1', _checkImage.data)
+        .then(hash => {
+          const hashArray = Array.from(new Uint8Array(hash));                     // convert buffer to byte array
+          const hex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
+          if(hex === _exercise.hex) {
+            console.info('Ok !');
+          }
+        })
+      }
     }
   }
 
@@ -195,6 +241,11 @@
     _cmd = null;
     _laser = false;
     _mode = "ABS";
+    _checkImage = null;
+    if (_exercise) {
+      let ctx = canvas.getContext('2d');
+      _checkImage = ctx.createImageData(SIM_W, SIM_H);
+    }
   }
 
   function showStop() {
@@ -291,26 +342,51 @@
     showStart();
   }
 
+  function loadCommands(commands) {
+    editor.innerHTML = '';
+    commands.forEach(cmd => {
+      let div = document.createElement('div');
+      div.innerText = cmd;
+      editor.appendChild(div);
+    });
+  }
+
+  // define exercices
+  _exercises['basic_square'] = {
+    commands : [
+      'INIT',
+      'MOVE 200 200',
+      'LASER ON',
+      'MOVE 600 200',
+      'LASER OFF'
+    ],
+    hex: '80bfa427dff9cb3f10cc1c260c9ad904aef4367d'
+  };
+
   // load program from URL if provided
   // query parameter must replace line breaks with pipes (%7C)
   let purl = new URL(window.location.href);
   if(purl && purl.searchParams) {
     let p = purl.searchParams.get("program");
     if(p && p.length) {
-      let editor = document.getElementById('editor')
+      let editor = document.getElementById('editor');
       let commands = p.split('|');
       if(commands && commands.length) {
-        editor.innerHTML = '';
-        commands.forEach(cmd => {
-          let div = document.createElement('div');
-          div.innerText = cmd;
-          editor.appendChild(div);
-        });
+        loadCommands(commands);
       } else {
         console.warn('Invalid program URL parameter', p);
       }
     }
-    let autostart = purl.searchParams.get("autostart")
+    let challenge = purl.searchParams.get("challenge");
+    if(challenge !== null) {
+      if (_exercises[challenge]) {
+        _exercise = _exercises[challenge];
+        loadCommands(_exercise.commands);
+      } else {
+        console.error(`Unknown exercise "${challenge}"`);
+      }
+    }
+    let autostart = purl.searchParams.get("autostart");
     if(autostart !== null) {
       start();
     }
@@ -324,5 +400,4 @@
 
   window.engraverStart = start;
   window.engraverStop = stop;
-  // start();
 })();
