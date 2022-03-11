@@ -317,8 +317,10 @@
   }
 
   // Page view counter
-  fetch('https://hitcounter.ileauxsciences.fr/hit/', {
-    method: 'POST' });
+  if (window.location.href.search('frama') > 0) {
+    fetch('https://hitcounter.ileauxsciences.fr/hit/', {
+      method: 'POST' });
+  }
 
   window.engraverStart = start;
   window.engraverStop = stop;
