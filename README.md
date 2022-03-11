@@ -6,6 +6,7 @@ Démo ici : <https://gbourel.frama.io/supergrave/>
 
 ## Versions
 
+ * v0.4.0 : ajout des "exercices" qui permettent de valider un exercice prédéfini. Cf "Exercices". L'identifiant est a placer dans l'url avec comme clef `challenge`, par exemple `?challenge=basic_square`.
  * v0.3.1 : ajout du compteur de vues de la page
  * v0.3.0 : amplitude des coordonnées et paramètres de l'URL
    - erreur lors de l'utilisation de coordonnées en dehors des limites
@@ -20,6 +21,10 @@ Démo ici : <https://gbourel.frama.io/supergrave/>
    - `HIPRE ON` active la haute précision coordonnées en centième de mm (max 305000 × 153000)
    - `HIPRE OFF` désactive la haute précision coordonnées en mm (max 3050 × 1530)
  * v0.1.0 : version initiale
+
+### Exercices
+
+ * `basic_square` : dessiner un simple carré de 400mm de coté, coin bas gauche en (200, 200).
 
 ## Développement
 

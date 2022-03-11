@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.3.1';
+  const VERSION = 'v0.4.0';
   const H_mm = 1530;
   const W_mm = 3050;
   const SIM_R = 5;
@@ -148,7 +148,7 @@
   }
 
   // parse commands and display engraving
-  function engrave() {
+  async function engrave() {
     let running = true;
     if(_cmd == null && _commands) {
       let e = _commands.next().value;
@@ -222,17 +222,23 @@
       if (_exercise) {
         // const ctx = canvas.getContext('2d');
         // ctx.putImageData(_checkImage, 0, 0);
-        crypto.subtle.digest('SHA-1', _checkImage.data)
-        .then(hash => {
-          const hashArray = Array.from(new Uint8Array(hash));                     // convert buffer to byte array
-          const hex = hashArray.map(b => b.toString(16).padStart(2, '0')).join(''); // convert bytes to hex string
-          if(hex === _exercise.hex) {
-            console.info('Ok !');
-          }
-        })
+        const hex = await getHexHash('SHA-1');
+        if(hex === _exercise.hex) {
+          console.info('Ok !');
+          window.postMessage({
+            'answer': await getHexHash('SHA-256'),
+            'from': 'pix' 
+          }, '*');
+        }
       }
     }
   }
+  
+  async function getHexHash(algorithm) {
+    const hash = await crypto.subtle.digest(algorithm, _checkImage.data);
+    const hashArray = Array.from(new Uint8Array(hash));                     
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  } 
 
   // reinit engraver in initial state
   function reinit() {
