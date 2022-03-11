@@ -223,7 +223,7 @@
         // const ctx = canvas.getContext('2d');
         // ctx.putImageData(_checkImage, 0, 0);
         const hex = await getHexHash('SHA-1');
-        if(hex === _exercise.hex) {
+        if(!_laser && hex === _exercise.hex) {
           console.info('Ok !');
           window.postMessage({
             'answer': await getHexHash('SHA-256'),
