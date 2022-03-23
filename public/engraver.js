@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.4.1';
+  const VERSION = 'v0.4.2';
   const H_mm = 1530;
   const W_mm = 3050;
   const SIM_R = 5;
@@ -220,25 +220,32 @@
       showStart();
       // Check exercise result on completion
       if (_exercise) {
-        // const ctx = canvas.getContext('2d');
-        // ctx.putImageData(_checkImage, 0, 0);
         const hex = await getHexHash('SHA-1');
         if(!_laser && hex === _exercise.hex) {
           console.info('Ok !');
+          const answer = await getHexHash('SHA-256');
           window.postMessage({
-            'answer': await getHexHash('SHA-256'),
-            'from': 'pix' 
+            'answer': answer,
+            'from': 'pix'
           }, '*');
         }
       }
     }
   }
-  
+
   async function getHexHash(algorithm) {
-    const hash = await crypto.subtle.digest(algorithm, _checkImage.data);
-    const hashArray = Array.from(new Uint8Array(hash));                     
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-  } 
+    if(algorithm === 'SHA-1') {
+      return window.sha1(_checkImage.data);
+    } else if(algorithm === 'SHA-256') {
+      return window.sha256(_checkImage.data);
+    }
+    console.error('Unavailable algorithm', algorithm);
+    return '';
+    // Crypto isn't available when not in secure context (eg. iframe).
+    // const hash = await crypto.subtle.digest(algorithm, _checkImage.data);
+    // const hashArray = Array.from(new Uint8Array(hash));
+    // return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  }
 
   // reinit engraver in initial state
   function reinit() {
