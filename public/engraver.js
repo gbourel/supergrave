@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.4.2';
+  const VERSION = 'v0.4.2b';
   const H_mm = 1530;
   const W_mm = 3050;
   const SIM_R = 5;
@@ -218,6 +218,15 @@
     } else {
       highlightCmd(null);
       showStart();
+      // Debug
+      if(parent) {
+        parent.window.postMessage({
+          'answer': await getHexHash('SHA-256'),
+          'from': 'pix'
+        }, '*');
+      } else {
+        console.warn('Where are my parents ? :(')
+      }
       // Check exercise result on completion
       if (_exercise) {
         const hex = await getHexHash('SHA-1');
