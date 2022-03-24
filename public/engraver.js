@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.4.2b';
+  const VERSION = 'v0.5.0';
   const H_mm = 1530;
   const W_mm = 3050;
   const SIM_R = 5;
@@ -218,25 +218,19 @@
     } else {
       highlightCmd(null);
       showStart();
-      // Debug
-      if(parent) {
-        parent.window.postMessage({
-          'answer': await getHexHash('SHA-256'),
-          'from': 'pix'
-        }, '*');
-      } else {
-        console.warn('Where are my parents ? :(')
-      }
       // Check exercise result on completion
       if (_exercise) {
         const hex = await getHexHash('SHA-1');
         if(!_laser && hex === _exercise.hex) {
           console.info('Ok !');
+          document.getElementById('overlay').style.display = 'block';
           const answer = await getHexHash('SHA-256');
-          window.postMessage({
-            'answer': answer,
-            'from': 'pix'
-          }, '*');
+          if(parent) {
+            parent.window.postMessage({
+              'answer': answer,
+              'from': 'pix'
+            }, '*');
+          }
         }
       }
     }

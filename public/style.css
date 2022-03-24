@@ -147,7 +147,7 @@ h2 {
   width: 48px;
 }
 
-.overlay {
+#overlay {
   display: none;
   position: absolute;
   top: 0;
@@ -156,19 +156,35 @@ h2 {
   right: 0;
   background: #40404090;
 }
-.overlay .done {
+#overlay img {
+  position: fixed;
+  width: 64px;
+  top: 50vh;
+  left: 50vw;
+  margin-top: -72px;
+  margin-left: -32px;
+  z-index: 10;
+}
+#overlay .done {
   position: fixed;
   width: 300px;
-  height: 100px;
+  height: 128px;
   margin-left: -150px;
   margin-top: -50px;
-  top: 25vh;
+  top: 50vh;
   left: 50vw;
-  background: #909090;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #FFFFFF;
   text-align: center;
-  border: 4px solid #005000;
+  border: 4px solid #20A020;
   border-radius: 12px;
 }
-.overlay .done .done-msg, .overlay .done .done-sub {
-  margin-top: 16px;
+#overlay .done .done-msg, #overlay .done .done-sub {
+  line-height: 32px;
+}
+#overlay .done .done-sub {
+  color: #333;
+  font-size: small;
 }
