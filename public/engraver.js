@@ -5,9 +5,20 @@
   const SIM_R = 5;
   const SIM_H = H_mm / SIM_R;
   const SIM_W = W_mm / SIM_R;
+  const DEFAULT_COMMANDS = [
+    'INIT',
+    'MOVE 150 150',
+    'LASER ON',
+    'MOVE 650 150',
+    'MOVE 650 750',
+    'LASER OFF',
+    'MODE REL',
+    'MOVE 750 150'
+  ];
 
-  let canvas = document.getElementById('engraver');
-  let _commands = null;  // list of commands
+  const canvas = document.getElementById('engraver');
+  const _editor = document.getElementById('editor');
+  let _commands = null;  // commands iterator
   let _cmd = null;       // current action
   let _mode = 'ABS';     // current mode ABS or REL
   let _pos = null;       // current pos
@@ -151,11 +162,11 @@
   async function engrave() {
     let running = true;
     if(_cmd == null && _commands) {
-      let e = _commands.next().value;
-      if(!e) {
+      let val = _commands.next().value;
+      if(!val) {
         running = false;
       } else {
-        _cmd = e.innerText.trim();
+        _cmd = val.trim();
         let res = null;
         console.info('COMMAND:', _cmd);
         if (_cmd === 'INIT') {
@@ -163,7 +174,7 @@
           _laser = false;
           _hipre = false;
           _cmd = null;
-          highlightCmd(e);
+          // highlightCmd(e);
         } else if (res = _cmd.match(/MOVE\s+(\d+)\s+(\d+)/)) {
           let x = parseInt(res[1]);
           let y = parseInt(res[2]);
@@ -188,16 +199,16 @@
               _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
               if(_checkImage) { simulateLine(_pos, _dest, _checkImage); }
             }
-            highlightCmd(e);
+            // highlightCmd(e);
           }
         } else if (res = _cmd.match(/LASER\s+(ON|OFF)/)) {
           _laser = res[1] === 'ON';
           _cmd = null;
-          highlightCmd(e);
+          // highlightCmd(e);
         } else if (res = _cmd.match(/MODE\s+(ABS|REL)/)) {
           _mode = res[1];
           _cmd = null;
-          highlightCmd(e);
+          // highlightCmd(e);
         } else if (res = _cmd.match(/HIPRE\s+(ON|OFF)/)) {
           _hipre = res[1] === 'ON';
           _cmd = null;
@@ -279,46 +290,6 @@
     elt.style.display = 'none';
   }
 
-  // recursively append children to nodes array
-  function appendChildren(nodes, elt){
-    for(const child of elt.childNodes) {
-      // replace text nodes with span (useful for highlighting)
-      if(child.nodeType === Node.TEXT_NODE) {
-        // if text isn't empty
-        if(child.textContent && child.textContent.trim() !== '') {
-          let span = document.createElement('span');
-          span.innerText = child.textContent;
-          elt.replaceChild(span, child);
-          nodes.push(span);
-        }
-      } else if(child.nodeType === Node.ELEMENT_NODE) {
-        if(child.children && child.children.length > 0
-           && !(child.children.length === 1
-                && child.children[0].nodeName === 'BR')) {
-          appendChildren(nodes, child);
-        } else {
-          // skips BR tags
-          if(child.nodeName !== 'BR' && child.innerText){
-            let commands = child.innerText.split('\n');
-            // if multiple commands, split them
-            if(commands && commands.length > 1) {
-              elt.removeChild(child);
-              commands.forEach(c => {
-                let div = document.createElement('div');
-                div.innerText = c;
-                elt.appendChild(div);
-              });
-            } else {
-              nodes.push(child);
-            }
-          }
-        }
-      } else {
-        console.warn('Unknown node type', child);
-      }
-    }
-  }
-
   // Resize canvas to fit parent size
   function resizeCanvas() {
     let parentWidth = canvas.parentElement.offsetWidth;
@@ -340,10 +311,8 @@
   // starts engraving using editor content as commands
   function start() {
     reinit();
-    let editor = document.getElementById("editor")
-    let nodes = [];
-    appendChildren(nodes, editor);
-    _commands = nodes.values();
+    let list = _editor.innerHTML.split('\n');
+    _commands = list.values();
     showStop();
     resizeCanvas();
     engrave();
@@ -359,12 +328,7 @@
   }
 
   function loadCommands(commands) {
-    editor.innerHTML = '';
-    commands.forEach(cmd => {
-      let div = document.createElement('div');
-      div.innerText = cmd;
-      editor.appendChild(div);
-    });
+    _editor.innerHTML = commands.join('\n');
   }
 
   // define exercices
@@ -385,13 +349,13 @@
     elt.style.display = 'none';
   }
 
+  loadCommands(DEFAULT_COMMANDS);
   // load program from URL if provided
   // query parameter must replace line breaks with pipes (%7C)
   let purl = new URL(window.location.href);
   if(purl && purl.searchParams) {
     let p = purl.searchParams.get("program");
     if(p && p.length) {
-      let editor = document.getElementById('editor');
       let commands = p.split('|');
       if(commands && commands.length) {
         loadCommands(commands);

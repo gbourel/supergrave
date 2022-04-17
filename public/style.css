@@ -87,10 +87,14 @@ h2 {
 #editor {
   width: 90%;
   height: 90%;
-  overflow-y: auto;
   margin: 5%;
-  max-height: 100vh;
+  overflow-y: auto;
   outline: none;
+  background: none;
+  color: #DDD;
+  resize: none;
+  border: none;
+  font-size: large;
 }
 .current {
   color: #D22;

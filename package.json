@@ -1,0 +1,19 @@
+{
+  "name": "supergrave",
+  "version": "0.5.1",
+  "description": "Simulateur de graveur laser",
+  "author": "GB <guillaume.bourel@ac-mayotte.fr>",
+  "engines": {
+    "node": "16.14.0",
+    "npm": "8.3.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@framagit.org:gbourel/supergrave.git"
+  },
+  "dependencies": {
+  },
+  "scripts": {
+    "deploy": "echo \"deploy\""
+  }
+}
