@@ -6,10 +6,11 @@ Démo ici : <https://gbourel.frama.io/supergrave/>
 
 ## Versions
 
+ * v0.5.2 : fix code editor lines order.
  * v0.5.1 : display style update.
  * v0.5.0 : display success info on exercise completion.
  * v0.4.2 : avoid crypto.subtle because unvailable ioutside secure context (eg. in iframe).
- * v0.4.1 : hide header while in iframe. 
+ * v0.4.1 : hide header while in iframe.
  * v0.4.0 : ajout des "exercices" qui permettent de valider un exercice prédéfini. Cf "Exercices". L'identifiant est a placer dans l'url avec comme clef `challenge`, par exemple `?challenge=basic_square`.
  * v0.3.1 : ajout du compteur de vues de la page
  * v0.3.0 : amplitude des coordonnées et paramètres de l'URL

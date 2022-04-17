@@ -1,5 +1,5 @@
 (function (){
-  const VERSION = 'v0.5.1';
+  const VERSION = 'v0.5.2';
   const H_mm = 1530;
   const W_mm = 3050;
   const SIM_R = 5;
@@ -16,10 +16,11 @@
     'MOVE 750 150'
   ];
 
-  const canvas = document.getElementById('engraver');
+  const _canvas = document.getElementById('engraver');
   const _editor = document.getElementById('editor');
   let _commands = null;  // commands iterator
   let _cmd = null;       // current action
+  let _cmdIdx = null;    // current action index
   let _mode = 'ABS';     // current mode ABS or REL
   let _pos = null;       // current pos
   let _dest = null;      // current destination
@@ -28,8 +29,8 @@
   let _lines = [];
   let _first = false;    // if first point, force draw (fix for small distances)
 
-  let _height = canvas.height;
-  let _width = canvas.width;
+  let _height = _canvas.height;
+  let _width = _canvas.width;
 
   let _speed = 500;
 
@@ -57,8 +58,8 @@
 
   // draw canvas
   function draw() {
-    if (canvas.getContext) {
-      let ctx = canvas.getContext("2d");
+    if (_canvas.getContext) {
+      let ctx = _canvas.getContext("2d");
 
       // clear canvas
       ctx.fillStyle = 'rgb(150,150,150)';
@@ -117,13 +118,14 @@
   }
 
   // highlight command
-  function highlightCmd(elt) {
+  function highlightCmd(idx) {
+    const displayContent = document.getElementById('highlighting-content');
     let highlighted = Array.from(document.querySelectorAll('.current'));
     highlighted.forEach(e => {
       e.classList.remove('current');
     })
-    if(elt) {
-      elt.classList.add('current');
+    if(idx >= 0 && idx < displayContent.childElementCount) {
+      displayContent.children[idx].classList.add('current');
     }
   }
 
@@ -163,6 +165,7 @@
     let running = true;
     if(_cmd == null && _commands) {
       let val = _commands.next().value;
+      _cmdIdx += 1;
       if(!val) {
         running = false;
       } else {
@@ -174,7 +177,7 @@
           _laser = false;
           _hipre = false;
           _cmd = null;
-          // highlightCmd(e);
+          highlightCmd(_cmdIdx);
         } else if (res = _cmd.match(/MOVE\s+(\d+)\s+(\d+)/)) {
           let x = parseInt(res[1]);
           let y = parseInt(res[2]);
@@ -199,23 +202,23 @@
               _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
               if(_checkImage) { simulateLine(_pos, _dest, _checkImage); }
             }
-            // highlightCmd(e);
+            highlightCmd(_cmdIdx);
           }
         } else if (res = _cmd.match(/LASER\s+(ON|OFF)/)) {
           _laser = res[1] === 'ON';
           _cmd = null;
-          // highlightCmd(e);
+          highlightCmd(_cmdIdx);
         } else if (res = _cmd.match(/MODE\s+(ABS|REL)/)) {
           _mode = res[1];
           _cmd = null;
-          // highlightCmd(e);
+          highlightCmd(_cmdIdx);
         } else if (res = _cmd.match(/HIPRE\s+(ON|OFF)/)) {
           _hipre = res[1] === 'ON';
           _cmd = null;
         } else {
           if(_cmd === '') {
             _cmd = null;
-            highlightCmd(null);
+            highlightCmd(-1);
           } else {
             console.error('Unknown command', _cmd);
             error('Erreur commande : \n' + _cmd);
@@ -227,7 +230,7 @@
     if(running) {
       requestAnimationFrame(engrave);
     } else {
-      highlightCmd(null);
+      highlightCmd(-1);
       showStart();
       // Check exercise result on completion
       if (_exercise) {
@@ -266,34 +269,39 @@
     _commands = null;
     _lines = [];
     _cmd = null;
+    _cmdIdx = -1;
     _laser = false;
     _mode = "ABS";
     _checkImage = null;
     if (_exercise) {
-      let ctx = canvas.getContext('2d');
+      let ctx = _canvas.getContext('2d');
       _checkImage = ctx.createImageData(SIM_W, SIM_H);
     }
   }
 
   function showStop() {
+    const codeDisplay = document.getElementById('highlighting');
     let elt = document.getElementById('run');
     elt.style.display = 'none';
     elt = document.getElementById('running');
     elt.style.display = 'inline-block';
+    codeDisplay.style.display = 'block';
   }
   function showStart() {
+    const codeDisplay = document.getElementById('highlighting');
     let elt = document.getElementById('running');
     elt.style.display = 'none';
     elt = document.getElementById('run');
     elt.style.display = 'inline-block';
     elt = document.getElementById('error');
     elt.style.display = 'none';
+    codeDisplay.style.display = 'none';
   }
 
   // Resize canvas to fit parent size
   function resizeCanvas() {
-    let parentWidth = canvas.parentElement.offsetWidth;
-    let parentHeight = canvas.parentElement.offsetHeight;
+    let parentWidth = _canvas.parentElement.offsetWidth;
+    let parentHeight = _canvas.parentElement.offsetHeight;
     let ratio = H_mm / W_mm;
     let margin = 16;
     let targetWidth = parentWidth - margin;
@@ -302,17 +310,20 @@
       targetHeight = parentHeight - margin;
       targetWidth = Math.round(targetHeight / ratio);
     }
-    canvas.width = targetWidth;
-    canvas.height = targetHeight;
-    _width = canvas.width;
-    _height = canvas.height;
+    _canvas.width = targetWidth;
+    _canvas.height = targetHeight;
+    _width = _canvas.width;
+    _height = _canvas.height;
   }
 
   // starts engraving using editor content as commands
   function start() {
     reinit();
-    let list = _editor.innerHTML.split('\n');
+    const displayContent = document.getElementById('highlighting-content');
+    let list = _editor.value.split('\n');
+    displayContent.innerHTML = list.map(cmd => { return `<div>${cmd}</div>`; }).join('\n');
     _commands = list.values();
+    loadCommands(list);
     showStop();
     resizeCanvas();
     engrave();
@@ -323,12 +334,13 @@
     _laser = false;
     _commands = null;
     _dest = null;
-    highlightCmd(null);
+    highlightCmd(-1);
     showStart();
   }
 
   function loadCommands(commands) {
-    _editor.innerHTML = commands.join('\n');
+    let content = commands.join('\n');
+    _editor.value = content;
   }
 
   // define exercices

@@ -28,10 +28,10 @@ header {
 }
 #version {
   position: absolute;
-  top: 1.5rem;
+  top: 1rem;
   right: 1.5rem;
   color: #999;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   font-style: italic;
 }
 h1 {
@@ -84,7 +84,10 @@ h2 {
   color: #DDD;
   padding: 0;
 }
-#editor {
+#editor, #highlighting {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 90%;
   height: 90%;
   margin: 5%;
@@ -95,6 +98,12 @@ h2 {
   resize: none;
   border: none;
   font-size: large;
+}
+#highlighting {
+  display: none;
+  background: #262626;
+  top: 2px;
+  left: 2px;
 }
 .current {
   color: #D22;
@@ -121,6 +130,7 @@ h2 {
 }
 
 .buttons {
+  z-index: 2;
   position: absolute;
   top: 0.5rem;
   right: 0.5rem;
@@ -159,6 +169,7 @@ h2 {
   left: 0;
   right: 0;
   background: #40404090;
+  z-index: 5;
 }
 #overlay img {
   position: fixed;

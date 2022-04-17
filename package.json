@@ -1,6 +1,6 @@
 {
   "name": "supergrave",
-  "version": "0.5.1",
+  "version": "0.5.2",
   "description": "Simulateur de graveur laser",
   "author": "GB <guillaume.bourel@ac-mayotte.fr>",
   "engines": {
