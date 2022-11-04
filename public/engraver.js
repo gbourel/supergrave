@@ -238,8 +238,8 @@
         if(!_laser && hex === _exercise.hex) {
           console.info('Ok !');
           document.getElementById('overlay').style.display = 'block';
-          const answer = await getHexHash('SHA-256');
           if(parent) {
+            const answer = await getHexHash('SHA-256');
             parent.window.postMessage({
               'answer': answer,
               'from': 'pix'
