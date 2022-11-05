@@ -1,28 +1,59 @@
+import GCodeParser from './gcode.js';
+
 (function (){
-  const VERSION = 'v0.5.2';
-  const H_mm = 1530;
-  const W_mm = 3050;
-  const SIM_R = 5;
-  const SIM_H = H_mm / SIM_R;
-  const SIM_W = W_mm / SIM_R;
+  const VERSION = 'v1.0.0';
+
+  const engravers = {
+    SCULPTFUN_S30PROMAX: {
+      height: 935,          // mm
+      width: 905,           // mm
+      focus: [0.08, 0.1],   // 0.08×0.1mm
+      wavelength: 455,      // nm
+      laserPower: 20,       // 20W,
+      speed: 1200,          // max speed 1200 mm/min
+      img: 'img/sculptfun_s30pro.webp'
+    },
+    LEGACY: {
+      height: 1530,         // mm
+      width: 3050,          // mm
+      focus: [0, 0],
+      wavelength: 0,
+      laserPower: 0,
+      speed: 1600,          // max speed 1600 mm/min
+      img: null
+    }
+  }
+  const engraver = engravers.SCULPTFUN_S30PROMAX;
+
+  const SIM_R = Math.round(engraver.height / 500); // simulated area ratio
+  const SIM_H = engraver.height / SIM_R;
+  const SIM_W = engraver.width / SIM_R;
+
   const DEFAULT_COMMANDS = [
-    'INIT',
-    'MOVE 150 150',
-    'LASER ON',
-    'MOVE 650 150',
-    'MOVE 650 750',
-    'LASER OFF',
-    'MODE REL',
-    'MOVE 750 150'
+    '%',
+    'G21 (All units in mm)',
+    '',
+    'G00 X150.0 Y150.0',
+    'M03',
+    'G01 X450 Y150 F400',
+    'G01 X450.0 Y750.0',
+    'M05',
+    'G91 (Incremental)',
+    'G00 X250.0 Y150.0',
+    'M02',
+    '%'
   ];
 
   const _canvas = document.getElementById('engraver');
   const _editor = document.getElementById('editor');
-  let _commands = null;  // commands iterator
+  let _parser = new GCodeParser();
   let _cmd = null;       // current action
   let _cmdIdx = null;    // current action index
   let _mode = 'ABS';     // current mode ABS or REL
-  let _pos = null;       // current pos
+  let _pos = [            // current pos
+    Math.floor(Math.random() * engraver.width * 100),
+    Math.floor(Math.random() * engraver.height * 100)
+  ];
   let _dest = null;      // current destination
   let _laser = false;    // if laser is on
   let _hipre = false;    // if high precision is on
@@ -32,7 +63,7 @@
   let _height = _canvas.height;
   let _width = _canvas.width;
 
-  let _speed = 500;
+  let _speed = engraver.speed;   // TODO mm/min ?
 
   // This object contains predefined exercise (may be use with nsix/pix)
   let _exercises = {};
@@ -44,20 +75,20 @@
 
   // convert x from mm/100 to canvas x
   function convertX(mm) {
-    let total = W_mm * 100;
+    let total = engraver.width * 100;
     let x = (mm / total) * _width;
     return x;
   }
 
   // convert y from mm/100 to canvas y
   function convertY(mm) {
-    let total = H_mm * 100;
+    let total = engraver.height * 100;
     let y = ((total - mm) / total) * _height;
     return y;
   }
 
-  // draw canvas
-  function draw() {
+  // render canvas
+  function render() {
     if (_canvas.getContext) {
       let ctx = _canvas.getContext("2d");
 
@@ -160,41 +191,37 @@
     }
   }
 
-  // parse commands and display engraving
-  async function engrave() {
-    let running = true;
-    if(_cmd == null && _commands) {
-      let val = _commands.next().value;
-      _cmdIdx += 1;
-      if(!val) {
-        running = false;
-      } else {
-        _cmd = val.trim();
-        let res = null;
-        console.info('COMMAND:', _cmd);
-        if (_cmd === 'INIT') {
-          _pos = [0, 0];
-          _laser = false;
-          _hipre = false;
-          _cmd = null;
-          highlightCmd(_cmdIdx);
-        } else if (res = _cmd.match(/MOVE\s+(\d+)\s+(\d+)/)) {
-          let x = parseInt(res[1]);
-          let y = parseInt(res[2]);
-          if(!_hipre) {
-            x *= 100;
-            y *= 100;
+  function handleCommand() {
+    if(_cmd.cmd.variable === 'G') {
+      switch(_cmd.cmd.value) {
+        case 0:  // Rapid positionning
+          _speed = engraver.speed;
+        case 1:       // Linear interpolation using a feed rate;
+          let x = _pos[0];
+          let y = _pos[1];
+          if('X' in _cmd.args) {
+            let v = Math.round(_cmd.args['X'] * 100);
+            if(_mode === 'REL') {
+              x += v;
+            } else {
+              x = v;
+            }
           }
-          if(_mode === 'REL') {
-            x += _pos[0];
-            y += _pos[1];
+          if('Y' in _cmd.args) {
+            let v = Math.round(_cmd.args['Y'] * 100);
+            if(_mode === 'REL') {
+              y += v;
+            } else {
+              y = v;
+            }
           }
-          if(x < 0 || x > W_mm*100) {
-            let val = _hipre ? x : Math.round(x/100);
-            error('Coordonnée en x invalide : \n' + val);
-          } else if(y < 0 || y > H_mm*100) {
-            let val = _hipre ? y : Math.round(y/100);
-            error('Coordonnée en y invalide : \n' + val);
+          if('F' in _cmd.args) {
+            _speed = Math.round(_cmd.args['F']);
+          }
+          if(x < 0 || x > engraver.width*100) {
+            error('Coordonnée en x invalide : \n' + x/100);
+          } else if(y < 0 || y > engraver.height*100) {
+            error('Coordonnée en y invalide : \n' + y/100);
           } else {
             _dest = [x, y];
             if(_laser) {
@@ -204,30 +231,116 @@
             }
             highlightCmd(_cmdIdx);
           }
-        } else if (res = _cmd.match(/LASER\s+(ON|OFF)/)) {
-          _laser = res[1] === 'ON';
+          break;
+        case 20:      // Imperial units;
+          console.error('Imperial units unavailable.');
+          break;
+        case 21:      // Metric units;
+          console.info('Using metric units.');
           _cmd = null;
-          highlightCmd(_cmdIdx);
-        } else if (res = _cmd.match(/MODE\s+(ABS|REL)/)) {
-          _mode = res[1];
+          break;
+        case 90:      // Absolute programming;
+          _mode = 'ABS';
           _cmd = null;
-          highlightCmd(_cmdIdx);
-        } else if (res = _cmd.match(/HIPRE\s+(ON|OFF)/)) {
-          _hipre = res[1] === 'ON';
+          break;
+        case 91:      // Incremental programming;
+          _mode = 'REL';
           _cmd = null;
-        } else {
-          if(_cmd === '') {
-            _cmd = null;
-            highlightCmd(-1);
-          } else {
-            console.error('Unknown command', _cmd);
-            error('Erreur commande : \n' + _cmd);
-          }
-        }
+          break;
+        case 2:       // Circular interpolation clockwise;
+        case 3:       // Circular interpolation, counterclockwise;
+        case 4:       // Dwell
+        case 10:      // Set working datum postion;
+        case 17:      // Select X-Y plane;
+        case 18:      // Select Z-X plane;
+        case 19:      // Select Z-Y plane;
+        case 27:      // Reference return check;
+        case 28:      // Automatic return through reference point;
+        case 29:      // Move to a location through reference point;
+        case 31:      // Skip function;
+        case 32:      // Thread cutting operation on a Lathe;
+        case 33:      // Thread cutting operation on a Mill;
+        case 40:      // Cancel cutter compensation;
+        case 41:      // Cutter compensation left;
+        case 42:      // Cutter compensation right;
+        case 43:      // Tool length compensation;
+        case 44:      // Tool length compensation;
+        case 50:      // Set coordinate system (Mill) and maximum RPM (Lathe);
+        case 52:      // Local coordinate system setting;
+        case 53:      // Machine coordinate system setting;
+        case 54:      //~G59 Set Datum;
+        case 70:      // Finish cycle (Lathe);
+        case 71:      // Rough turning cycle (Lathe);
+        case 72:      // Rough facing cycle (Lathe);
+        case 73:      // Pattern Repeating Cycle;
+        case 74:      // Left hand tapping Mill;
+        case 74:      // Face grooving cycle;
+        case 75:      // OD groove pecking cycle (Lathe);
+        case 76:      // Boring cycle;
+        case 76:      // Screw cutting cycle (Lathe);
+        case 80:      // Cancel cycles;
+        case 81:      // Drill cycle;
+        case 82:      // Drill cycle with dwell;
+        case 83:      // Peck drilling cycle;
+        case 84:      // Tapping cycle;
+        case 85:      // Bore in, bore out;
+        case 86:      // Bore in, rapid out;
+        case 87:      // Back boring cycle;
+        case 92:      // Reposition origin point;
+        case 92:      // Screw thread cutting cycle (Lathe);
+        case 94:      // Per minute feed;
+        case 95:      // Per revolution feed;
+        case 96:      // Constant surface speed (Lathe);
+        case 97:      // Constant surface speed cancel;
+        case 98:      // Feed per minute (Lathe);
+        case 99:      // Feed per revolution (Lathe)
+        default:
+          console.info('Unhandled', _cmd.cmd.full);
+          _cmd = null;
+      }
+    } else if(_cmd.cmd.variable === 'M') {
+      switch(_cmd.cmd.value) {
+        case 3:       //  Spindle ON (CW Rotation)
+          _laser = true;
+          break;
+        case 5:       //  Spindle Stop
+          _laser = false;
+          break;
+        case 2:       //  End of Program
+          _parser.stop();
+          break;
+        case 0:       //  Program Stop (non-optional)
+        case 1:       //  Optional Stop: Operator Selected to Enable
+        case 4:       //  Spindle ON (CCW Rotation)
+        case 6:       //  Tool Change
+        case 7:       //  Mist Coolant ON
+        case 8:       //  Flood Coolant ON
+        case 9:       //  Coolant OFF
+        default:
+          console.info('TODO handle', _cmd.cmd.full);
+          _cmd = null;
+      }
+      _cmd = null;
+    } else {
+      console.error('Unhandled command', JSON.stringify(_cmd, '', ' '));
+    }
+  }
+
+  // parse commands and display engraving
+  async function engrave() {
+    let running = true;
+    if(_cmd == null) {
+      _cmd = _parser.next();
+      _cmdIdx += 1;
+      if(!_cmd) {
+        running = false;
+      } else {
+        let res = null;
+        handleCommand(_cmd);
       }
     }
-    draw();
-    if(running) {
+    render();
+    if (running) {
       requestAnimationFrame(engrave);
     } else {
       highlightCmd(-1);
@@ -266,7 +379,6 @@
 
   // reinit engraver in initial state
   function reinit() {
-    _commands = null;
     _lines = [];
     _cmd = null;
     _cmdIdx = -1;
@@ -302,7 +414,7 @@
   function resizeCanvas() {
     let parentWidth = _canvas.parentElement.offsetWidth;
     let parentHeight = _canvas.parentElement.offsetHeight;
-    let ratio = H_mm / W_mm;
+    let ratio = engraver.height / engraver.width;
     let margin = 16;
     let targetWidth = parentWidth - margin;
     let targetHeight = Math.round(targetWidth * ratio);
@@ -322,17 +434,18 @@
     const displayContent = document.getElementById('highlighting-content');
     let list = _editor.value.split('\n');
     displayContent.innerHTML = list.map(cmd => { return `<div>${cmd}</div>`; }).join('\n');
-    _commands = list.values();
     loadCommands(list);
     showStop();
     resizeCanvas();
+
+    _parser.init(list.values());
     engrave();
   }
 
   // Emergency stop engraving
   function stop() {
+    _parser.stop();
     _laser = false;
-    _commands = null;
     _dest = null;
     highlightCmd(-1);
     showStart();

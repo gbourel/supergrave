@@ -2,10 +2,13 @@
 
 Simulateur de graveur laser 2D.
 
-Démo ici : <https://gbourel.frama.io/supergrave/>
+Les dimensions et paramètres sont basés sur les spécifications du modèle SCULPFUN S30 Pro Max avec options d'extension sur les axes X et Y ([cf. site du fabricant](https://sculpfun.com/collections/sculpfun-s30/products/sculpfun-s30-pro-max-automatic-air-assist-laser-engraver-machine-20w?variant=42446149877938).
+
+Démo ici : <https://laser.nsix.fr/>
 
 ## Versions
 
+ * **v1.0.0** : remplacement du code simplifié par du G-Code.
  * v0.5.2 : fix code editor lines order.
  * v0.5.1 : display style update.
  * v0.5.0 : display success info on exercise completion.
