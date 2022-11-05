@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Decoupe laser</title>
+    <meta name="description" content="Simulateur de découpe laser" />
+    <meta name="author" content="G. Bourel" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Lato&family=Vollkorn:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <header id="title-header">
+      <img class="logo" src="img/engraver-w.svg" />
+      <h1>Simulateur de découpe laser</h1>
+    </header>
+    <span id="version"></span>
+    <div class="content">
+      <div class="code">
+        <div class="buttons">
+          <div id="run" onclick="engraverStart()">
+            <img src="img/arrow.svg" />
+          </div>
+          <div id="running">
+            <img src="img/engraverAnim.svg" />
+            <div class="stop" onclick="engraverStop()">
+              <img src="img/off.svg" />
+            </div>
+          </div>
+        </div>
+        <textarea id="editor" spellcheck="false"></textarea>
+        <div id="highlighting" aria-hidden="true">
+          <code id="highlighting-content"></code>
+        </div>
+      </div>
+      <div class="demo">
+        <canvas id=engraver width="305" height="153">
+        </canvas>
+        <div id="error" onclick="engraverStop()">
+          Error
+        </div>
+      </div>
+    </div>
+    <div id="overlay">
+      <img src="img/success.svg">
+      <div class="done">
+        <div class="done-msg">Bravo, un grand succès !</div>
+        <div class="done-sub">Appuyer sur valider pour continuer.</div>
+      </div>
+    </div>
+    <script src="legacy.js"></script>
+    <script src="sha1.js"></script>
+    <script src="sha256.js"></script>
+  </body>
+</html>
