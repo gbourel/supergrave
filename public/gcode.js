@@ -30,58 +30,56 @@ export default class GCodeParser {
 			line = line.trim();
 			line = line.replace(RE_COMMENT, '');		// remove comments
 			line = line.replace(RE_COMMENT2, '');		// remove comments
-			if(line.length === 0) { continue; }
+			if(line.length > 0) {
+				// Whole line instructions: start, stop
+				if (line === '%') {
+					if(this.state === 'IDLE') {
+						debug('Start');
+						this.state = 'RUNNING';
+					} else if(this.state === 'RUNNING') {
+						debug('Stop');
+						this.state = 'IDLE';
+					}
+				} else {
+					let res = null;
+					let tokens = line.split(/\s+/);
+					let instruction = {
+						idx: lineIdx,
+						line: lineIdx,
+						cmd: null,
+						args: {}
+					};
 
-			lineIdx++;
-
-			// Whole line instructions: start, stop
-			if (line === '%') {
-				if(this.state === 'IDLE') {
-					debug('Start');
-					this.state = 'RUNNING';
-					lineIdx = 0;
-				} else if(this.state === 'RUNNING') {
-					debug('Stop');
-					this.state = 'IDLE';
-					lineIdx = 0;
-				}
-			} else {
-				let res = null;
-				let tokens = line.split(/\s+/);
-				let instruction = {
-					line: lineIdx,
-					cmd: null,
-					args: {}
-				};
-
-				for (let t of tokens) {
-					if (t.length === 0) { continue; }
-					if ((res = RE_CMD.exec(t)) !== null) {
-						debug('  cmd', res)
-						instruction.cmd = {
-							'full': res[0],
-							'variable': res[1],
-							'value': parseInt(res[2])
-						};
-					} else if ((res = RE_ARGS.exec(t)) !== null) {
-						debug('    args', res)
-						instruction.args[res[1]] = parseFloat(res[2]);
-					} else if (RE_LINE.exec(t)) {
-						if(instruction.line) {
-							this.error('Multiple line number ' + t);
+					for (let t of tokens) {
+						if (t.length === 0) { continue; }
+						if ((res = RE_CMD.exec(t)) !== null) {
+							debug('  cmd', res)
+							instruction.cmd = {
+								'full': res[0],
+								'variable': res[1],
+								'value': parseInt(res[2])
+							};
+						} else if ((res = RE_ARGS.exec(t)) !== null) {
+							debug('    args', res)
+							instruction.args[res[1]] = parseFloat(res[2]);
+						} else if (RE_LINE.exec(t)) {
+							if(instruction.line) {
+								this.error('Multiple line number ' + t);
+							}
+							instruction.line = t;
+						} else {
+							this.error('Unknown token ' + t);
 						}
-						instruction.line = t;
+					}
+					if (instruction.cmd !== null) {
+						this.instructions.push(instruction);
+						debug('=> instruction', JSON.stringify(instruction));
 					} else {
-						this.error('Unknown token ' + t);
+						console.warn('Unknown instruction', line);
 					}
 				}
-				if (instruction.cmd !== null) {
-					this.instructions.push(instruction);
-					debug('=> instruction', JSON.stringify(instruction));
-				} else {
-					console.warn('Unknown instruction', line);
-				}
 			}
+			lineIdx++;
 		}
 	}
 

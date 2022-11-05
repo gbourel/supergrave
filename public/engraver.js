@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.0.0';
+  const VERSION = 'v1.0.1';
 
   const engravers = {
     SCULPTFUN_S30PROMAX: {
@@ -48,7 +48,6 @@ import GCodeParser from './gcode.js';
   const _editor = document.getElementById('editor');
   let _parser = new GCodeParser();
   let _cmd = null;       // current action
-  let _cmdIdx = null;    // current action index
   let _mode = 'ABS';     // current mode ABS or REL
   let _pos = [            // current pos
     Math.floor(Math.random() * engraver.width * 100),
@@ -229,7 +228,7 @@ import GCodeParser from './gcode.js';
               _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
               if(_checkImage) { simulateLine(_pos, _dest, _checkImage); }
             }
-            highlightCmd(_cmdIdx);
+            highlightCmd(_cmd.idx);
           }
           break;
         case 20:      // Imperial units;
@@ -331,7 +330,6 @@ import GCodeParser from './gcode.js';
     let running = true;
     if(_cmd == null) {
       _cmd = _parser.next();
-      _cmdIdx += 1;
       if(!_cmd) {
         running = false;
       } else {
@@ -381,7 +379,6 @@ import GCodeParser from './gcode.js';
   function reinit() {
     _lines = [];
     _cmd = null;
-    _cmdIdx = -1;
     _laser = false;
     _mode = "ABS";
     _checkImage = null;
