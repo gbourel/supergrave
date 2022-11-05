@@ -8,6 +8,7 @@ Démo ici : <https://laser.nsix.fr/>
 
 ## Versions
 
+ * v1.0.1: correction mise en surbrillance des commandes pendant l'exécution.
  * **v1.0.0** : remplacement du code simplifié par du G-Code.
  * v0.5.2 : fix code editor lines order.
  * v0.5.1 : display style update.
