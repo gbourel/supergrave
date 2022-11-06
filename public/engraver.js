@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.0.1';
+  const VERSION = 'v1.0.2';
 
   const engravers = {
     SCULPTFUN_S30PROMAX: {
@@ -31,13 +31,14 @@ import GCodeParser from './gcode.js';
 
   const DEFAULT_COMMANDS = [
     '%',
-    'G21 (All units in mm)',
+    'G21 G90 (mm, absolu)',
     '',
     'G00 X150.0 Y150.0',
     'M03',
     'G01 X450 Y150 F400',
     'G01 X450.0 Y650.0',
     'M05',
+    'G04 P0.5',
     'G91 (Incremental)',
     'G00 X250.0 Y150.0',
     '',
@@ -252,6 +253,15 @@ import GCodeParser from './gcode.js';
             }
           }
           break;
+        case 4:       // P temporisation en secondes
+          if (!_cmd.args['P']) {
+            error('Valeur de temporisation P manquante pour commande G4');
+          } else {
+            setTimeout(() => {
+              _cmd = null;
+            }, _cmd.args['P'] * 1000);
+          }
+          break;
         case 10:
           if (_cmd.args['L'] === 2) { // systemes de coordonnees;
             if (!_cmd.args['P']) {
@@ -269,10 +279,10 @@ import GCodeParser from './gcode.js';
           }
           break;
         case 20:      // Imperial units;
-          console.error('Imperial units unavailable.');
+          error('Unités impériales non prises en compte.');
           break;
         case 21:      // Metric units;
-          console.info('Using metric units.');
+          console.info('Unités métriques');
           _cmd = null;
           break;
         case 54:
@@ -301,10 +311,12 @@ import GCodeParser from './gcode.js';
           break;
         case 90:      // Absolute programming;
           _mode = 'ABS';
+          console.info('Mode absolu');
           _cmd = null;
           break;
         case 91:      // Incremental programming;
           _mode = 'REL';
+          console.info('Mode relatif');
           _cmd = null;
           break;
         case 17:      // Select X-Y plane Rotation en Z;
@@ -316,7 +328,6 @@ import GCodeParser from './gcode.js';
           break;
         case 2:       // Circular interpolation clockwise;
         case 3:       // Circular interpolation, counterclockwise;
-        case 4:       // P temporisation en secondes
         case 5 :      // Spline cubique
         // case 5.1:     // B-Spline quadratique
         // case 5.2:     // NURBS, ajout point de contrôle
