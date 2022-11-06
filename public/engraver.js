@@ -36,10 +36,11 @@ import GCodeParser from './gcode.js';
     'G00 X150.0 Y150.0',
     'M03',
     'G01 X450 Y150 F400',
-    'G01 X450.0 Y750.0',
+    'G01 X450.0 Y650.0',
     'M05',
     'G91 (Incremental)',
     'G00 X250.0 Y150.0',
+    '',
     'M02',
     '%'
   ];
@@ -68,6 +69,10 @@ import GCodeParser from './gcode.js';
   let _exercises = {};
   let _exercise = null;   // current exercise if any
   let _checkImage = null; // image use to check exercise completion
+
+  let _coordinateSystems = new Array(10);
+  let _coordT   = [ 0, 0 ];
+  let _coordRot = [ [1, 0], [0, 1] ];
 
   // display current version
   document.getElementById('version').textContent = VERSION;
@@ -190,6 +195,19 @@ import GCodeParser from './gcode.js';
     }
   }
 
+  /// Switch to another coordinates system
+  function useCoordinates(idx) {
+    const cs = _coordinateSystems[idx];
+    if (cs) {
+      if (typeof(cs['x']) === 'number') { _coordT[0] = cs['x'] * 100; }
+      if (typeof(cs['y']) === 'number') { _coordT[1] = cs['y'] * 100; }
+      if (typeof(cs['r']) === 'number') {
+        let a = cs['r'] * Math.PI / 180;
+        _coordRot = [ [Math.cos(a), -Math.sin(a)], [Math.sin(a), Math.cos(a)] ];
+      }
+    }
+  }
+
   function handleCommand() {
     if(_cmd.cmd.variable === 'G') {
       switch(_cmd.cmd.value) {
@@ -217,18 +235,37 @@ import GCodeParser from './gcode.js';
           if('F' in _cmd.args) {
             _speed = Math.round(_cmd.args['F']);
           }
-          if(x < 0 || x > engraver.width*100) {
-            error('Coordonnée en x invalide : \n' + x/100);
+          x = x + _coordT[0];
+          y = y + _coordT[1];
+          let x2 = x * _coordRot[0][0] + y * _coordRot[0][1];
+          let y2 = x * _coordRot[1][0] + y * _coordRot[1][1];
+          if(x2 < 0 || x2 > engraver.width*100) {
+            error('Coordonnée en x invalide : \n' + x2/100);
           } else if(y < 0 || y > engraver.height*100) {
-            error('Coordonnée en y invalide : \n' + y/100);
+            error('Coordonnée en y invalide : \n' + y2/100);
           } else {
-            _dest = [x, y];
+            _dest = [x2, y2];
             if(_laser) {
               _first = true;
               _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
               if(_checkImage) { simulateLine(_pos, _dest, _checkImage); }
             }
-            highlightCmd(_cmd.idx);
+          }
+          break;
+        case 10:
+          if (_cmd.args['L'] === 2) { // systemes de coordonnees;
+            if (!_cmd.args['P']) {
+              error('Index P manquant pour commande G10 L2');
+            } else {
+              _coordinateSystems[_cmd.args['P']] = {
+                'x': _cmd.args['X'],
+                'y': _cmd.args['Y'],
+                'r': _cmd.args['R']
+              };
+              _cmd = null;
+            }
+          } else {
+            error('Commande G10 L' + _cmd.args['L'] + ' non prise en compte.');
           }
           break;
         case 20:      // Imperial units;
@@ -236,6 +273,30 @@ import GCodeParser from './gcode.js';
           break;
         case 21:      // Metric units;
           console.info('Using metric units.');
+          _cmd = null;
+          break;
+        case 54:
+          useCoordinates(1);
+          _cmd = null;
+          break;
+        case 55:
+          useCoordinates(2);
+          _cmd = null;
+          break;
+        case 56:
+          useCoordinates(3);
+          _cmd = null;
+          break;
+        case 57:
+          useCoordinates(4);
+          _cmd = null;
+          break;
+        case 58:
+          useCoordinates(5);
+          _cmd = null;
+          break;
+        case 59:
+          useCoordinates(6);
           _cmd = null;
           break;
         case 90:      // Absolute programming;
@@ -246,13 +307,23 @@ import GCodeParser from './gcode.js';
           _mode = 'REL';
           _cmd = null;
           break;
-        case 2:       // Circular interpolation clockwise;
-        case 3:       // Circular interpolation, counterclockwise;
-        case 4:       // Dwell
-        case 10:      // Set working datum postion;
-        case 17:      // Select X-Y plane;
+        case 17:      // Select X-Y plane Rotation en Z;
+          console.info('Plan X-Y');
+          break;
         case 18:      // Select Z-X plane;
         case 19:      // Select Z-Y plane;
+          error('Plan suivant Z non utilisable avec ce graveur laser.');
+          break;
+        case 2:       // Circular interpolation clockwise;
+        case 3:       // Circular interpolation, counterclockwise;
+        case 4:       // P temporisation en secondes
+        case 5 :      // Spline cubique
+        // case 5.1:     // B-Spline quadratique
+        // case 5.2:     // NURBS, ajout point de contrôle
+        // case 5.3:     // NURBS, exécute
+        case 7:       // Mode diamètre (sur les tours)
+        case 8:       // Mode rayon (sur les tours)
+        case 20:      // Unites machine
         case 27:      // Reference return check;
         case 28:      // Automatic return through reference point;
         case 29:      // Move to a location through reference point;
@@ -267,7 +338,8 @@ import GCodeParser from './gcode.js';
         case 50:      // Set coordinate system (Mill) and maximum RPM (Lathe);
         case 52:      // Local coordinate system setting;
         case 53:      // Machine coordinate system setting;
-        case 54:      //~G59 Set Datum;
+        case 68:
+        case 69:
         case 70:      // Finish cycle (Lathe);
         case 71:      // Rough turning cycle (Lathe);
         case 72:      // Rough facing cycle (Lathe);
@@ -294,7 +366,7 @@ import GCodeParser from './gcode.js';
         case 98:      // Feed per minute (Lathe);
         case 99:      // Feed per revolution (Lathe)
         default:
-          console.info('Unhandled', _cmd.cmd.full);
+          console.warn('Unhandled', _cmd.cmd.full);
           _cmd = null;
       }
     } else if(_cmd.cmd.variable === 'M') {
@@ -306,17 +378,37 @@ import GCodeParser from './gcode.js';
           _laser = false;
           break;
         case 2:       //  End of Program
+        case 30:
           _parser.stop();
           break;
         case 0:       //  Program Stop (non-optional)
         case 1:       //  Optional Stop: Operator Selected to Enable
         case 4:       //  Spindle ON (CCW Rotation)
         case 6:       //  Tool Change
+        case 6:       // Appel d’outil avec Tn n=numéro d’outil
         case 7:       //  Mist Coolant ON
         case 8:       //  Flood Coolant ON
         case 9:       //  Coolant OFF
+        case 19:      // Orientation de la broche
+        case 48:      //
+        case 49:      // Contrôle des correcteurs de vitesse
+        case 50:      // Contrôle du correcteur de vitesse travail
+        case 51:      // Contrôle du correcteur de vitesse de broche
+        case 52:      // Correcteur dynamique de vitesse d’avance
+        case 53:      // Contrôle de la coupure de vitesse
+        case 60:       // Pause pour déchargement pièce
+        case 61:      // Correction du numéro de l’outil courant
+        case 62:      //
+        case 65:      // Contrôle de sortie numérique
+        case 66:      // Contrôle d’entrée numérique et analogique
+        case 67:      // Contrôle sortie analogique synchronisée
+        case 68:      // Contrôle sortie analogique directe
+        case 70:      // Enregistre l'état modal
+        case 71:      // Invalide l'état modal enregistré
+        case 72:      // Restaure l'état modal
+        case 73:      // Enregistrement/auto-restauration de l'état modal
         default:
-          console.info('TODO handle', _cmd.cmd.full);
+          console.warn('Unhandled', _cmd.cmd.full);
           _cmd = null;
       }
       _cmd = null;
@@ -333,7 +425,7 @@ import GCodeParser from './gcode.js';
       if(!_cmd) {
         running = false;
       } else {
-        let res = null;
+        highlightCmd(_cmd.idx);
         handleCommand(_cmd);
       }
     }

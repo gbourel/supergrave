@@ -4,9 +4,9 @@ let debug = function() {};
 
 const RE_COMMENT = /\((.*)\)/;
 const RE_COMMENT2 = /;.*/;
-const RE_CMD = /([GM])(\d\d?)/;
+const RE_CMD = /([GM])(\d\d?\d?)/;
 const RE_LINE = /N\d\d?/;
-const RE_ARGS = /([XYZF])(-?\d+(\.?\d+)?)/;
+const RE_ARGS = /([FIJLPRXYZ])(-?\d+(\.?\d+)?)/;
 
 export default class GCodeParser {
 	constructor() {

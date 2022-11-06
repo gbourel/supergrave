@@ -2,12 +2,17 @@
 
 Simulateur de graveur laser 2D.
 
-Les dimensions et paramètres sont basés sur les spécifications du modèle SCULPFUN S30 Pro Max avec options d'extension sur les axes X et Y ([cf. site du fabricant](https://sculpfun.com/collections/sculpfun-s30/products/sculpfun-s30-pro-max-automatic-air-assist-laser-engraver-machine-20w?variant=42446149877938).
+Les dimensions et paramètres sont basés sur les spécifications du modèle SCULPFUN S30 Pro Max avec options d'extension sur les axes X et Y ([cf. site du fabricant](https://sculpfun.com/collections/sculpfun-s30/products/sculpfun-s30-pro-max-automatic-air-assist-laser-engraver-machine-20w?variant=42446149877938)).
 
 Démo ici : <https://laser.nsix.fr/>
 
+## GCode
+
+Pour l'utilisation du G-Code, une très bonne explication ici : <http://linuxcnc.org/docs/html/gcode/gcode_fr.html>.
+
 ## Versions
 
+ * v1.0.2: prise en compte des commandes G10 L2, G54 à G59.
  * v1.0.1: correction mise en surbrillance des commandes pendant l'exécution.
  * **v1.0.0** : remplacement du code simplifié par du G-Code.
  * v0.5.2 : fix code editor lines order.
@@ -42,4 +47,3 @@ Page HTML statique.
 Serveur avec live-reload
 
 `npm install -g live-server`
-
