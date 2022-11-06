@@ -12,6 +12,7 @@ Pour l'utilisation du G-Code, une très bonne explication ici : <http://linuxcnc
 
 ## Versions
 
+ * v1.0.3: plusieurs commandes par ligne acceptées.
  * v1.0.2: prise en compte des commandes G10 L2, G54 à G59.
  * v1.0.1: correction mise en surbrillance des commandes pendant l'exécution.
  * **v1.0.0** : remplacement du code simplifié par du G-Code.

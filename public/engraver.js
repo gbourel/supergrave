@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.0.2';
+  const VERSION = 'v1.0.3';
 
   const engravers = {
     SCULPTFUN_S30PROMAX: {
@@ -39,7 +39,7 @@ import GCodeParser from './gcode.js';
     'G01 X450.0 Y650.0',
     'M05',
     'G04 P0.5',
-    'G91 (Incremental)',
+    'G91 (incrémental)',
     'G00 X250.0 Y150.0',
     '',
     'M02',
@@ -282,41 +282,47 @@ import GCodeParser from './gcode.js';
           error('Unités impériales non prises en compte.');
           break;
         case 21:      // Metric units;
-          console.info('Unités métriques');
+          console.info('G21: Unités métriques');
           _cmd = null;
           break;
         case 54:
+          console.info('G54: système de coordonnées no 1.');
           useCoordinates(1);
           _cmd = null;
           break;
         case 55:
+          console.info('G55: système de coordonnées no 2.');
           useCoordinates(2);
           _cmd = null;
           break;
         case 56:
+          console.info('G56: système de coordonnées no 3.');
           useCoordinates(3);
           _cmd = null;
           break;
         case 57:
+          console.info('G57: système de coordonnées no 4.');
           useCoordinates(4);
           _cmd = null;
           break;
         case 58:
+          console.info('G58: système de coordonnées no 5.');
           useCoordinates(5);
           _cmd = null;
           break;
         case 59:
+          console.info('G59: système de coordonnées no 6.');
           useCoordinates(6);
           _cmd = null;
           break;
         case 90:      // Absolute programming;
           _mode = 'ABS';
-          console.info('Mode absolu');
+          console.info('G90: Mode absolu');
           _cmd = null;
           break;
         case 91:      // Incremental programming;
           _mode = 'REL';
-          console.info('Mode relatif');
+          console.info('G91: Mode relatif');
           _cmd = null;
           break;
         case 17:      // Select X-Y plane Rotation en Z;

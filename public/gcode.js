@@ -54,6 +54,17 @@ export default class GCodeParser {
 						if (t.length === 0) { continue; }
 						if ((res = RE_CMD.exec(t)) !== null) {
 							debug('  cmd', res)
+							// if another command is already defined on same line
+							if(instruction.cmd) {
+								console.info('Multiple commands');
+								this.instructions.push(instruction);
+								instruction = {
+									idx: lineIdx,
+									line: lineIdx,
+									cmd: null,
+									args: {}
+								};
+							}
 							instruction.cmd = {
 								'full': res[0],
 								'variable': res[1],
