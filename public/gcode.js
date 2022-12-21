@@ -87,6 +87,12 @@ export default class GCodeParser {
 						debug('=> instruction', JSON.stringify(instruction));
 					} else {
 						console.warn('Unknown instruction', line);
+						this.instructions.push({
+									idx: lineIdx,
+									line: lineIdx,
+									cmd: null,
+									err: `Unknown instruction: ${line}`
+						});
 					}
 				}
 			}

@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.1.0';
+  const VERSION = 'v1.2.0';
 
   const engravers = {
     DENER_FL_3015: {
@@ -219,7 +219,12 @@ import GCodeParser from './gcode.js';
   }
 
   function handleCommand() {
-    if(_cmd.cmd.variable === 'G') {
+    if(_cmd.cmd === null) {
+      if (_cmd.err) {
+        return _cmd.err;
+      }
+      return 'Commande invalide';
+    } else if(_cmd.cmd.variable === 'G') {
       switch(_cmd.cmd.value) {
         case 0:  // Rapid positionning
           _speed = engraver.speed;
@@ -266,6 +271,7 @@ import GCodeParser from './gcode.js';
           if (!_cmd.args['P']) {
             error('Valeur de temporisation P manquante pour commande G4');
           } else {
+            console.info('G04: Temporisation');
             setTimeout(() => {
               _cmd = null;
             }, _cmd.args['P'] * 1000);
@@ -455,7 +461,10 @@ import GCodeParser from './gcode.js';
         running = false;
       } else {
         highlightCmd(_cmd.idx);
-        handleCommand(_cmd);
+        let err = handleCommand(_cmd);
+        if(err) {
+          return error(err);
+        }
       }
     }
     render();
