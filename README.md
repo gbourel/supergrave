@@ -2,7 +2,9 @@
 
 Simulateur de graveur laser 2D.
 
-Les dimensions et paramètres sont basés sur les spécifications du modèle SCULPFUN S30 Pro Max avec options d'extension sur les axes X et Y ([cf. site du fabricant](https://sculpfun.com/collections/sculpfun-s30/products/sculpfun-s30-pro-max-automatic-air-assist-laser-engraver-machine-20w?variant=42446149877938)).
+Les dimensions et paramètres sont basés sur les spécifications des modèles
+ * Dener FL-3015-S
+ * SCULPFUN S30 Pro Max avec options d'extension sur les axes X et Y ([cf. site du fabricant](https://sculpfun.com/collections/sculpfun-s30/products/sculpfun-s30-pro-max-automatic-air-assist-laser-engraver-machine-20w?variant=42446149877938)).
 
 Démo ici : <https://laser.nsix.fr/>
 

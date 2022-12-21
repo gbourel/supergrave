@@ -3,34 +3,44 @@
 import math
 
 # Initialisation
-print("INIT")
-print("MOVE 150 150")
+print("%")
+print("G21 G90")          # mm, absolu
+print("G00 X150 Y150")
 
 # Grave un rectangle
-print("LASER ON")
-print("MOVE 650 150")
-print("MOVE 650 750")
-print("MOVE 150 750")
-print("MOVE 150 150")
-print("LASER OFF")
+print("M03")
+print("G01 X650 Y150 F400")
+print("G01 X650 Y750")
+print("G01 X150 Y750")
+print("G01 X150 Y150")
+print("M05")
 
 # Test du mode relatif
-print("MOVE 750 150")
-print("LASER ON")
-print("MODE REL")
-print("MOVE 200 500")
-print("LASER OFF")
-print("MODE ABS")
+print("G00 X750 Y150")
+print("G03")
+print("G91")
+print("G01 X200 Y500")
+print("G05")
+print("G90")
 
 # Grave un cercle
 center = (1500, 500)
 radius = 250
 steps = 24
+move_cmd = "G00"
+speed = ""
 
 for i in range(steps + 1):
   angle = (2*math.pi / steps) * i
   if i == 1 :
-    print("LASER ON")
+    move_cmd = "G01"
+    speed = "F1200"
+    print("M03")
+  if i == 2:
+    speed = ""
   pt = (round(center[0] + math.cos(angle)*radius),
         round(center[1] + math.sin(angle)*radius))
-  print("MOVE", pt[0], pt[1])
+  print(f"{move_cmd} X{pt[0]} Y{pt[1]} {speed}")
+
+print("M05 M02")
+print("%")

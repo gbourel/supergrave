@@ -56,7 +56,7 @@ export default class GCodeParser {
 							debug('  cmd', res)
 							// if another command is already defined on same line
 							if(instruction.cmd) {
-								console.info('Multiple commands');
+								// console.info('Multiple commands');
 								this.instructions.push(instruction);
 								instruction = {
 									idx: lineIdx,

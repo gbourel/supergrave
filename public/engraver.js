@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.0.4';
+  const VERSION = 'v1.1.0';
 
   const engravers = {
     DENER_FL_3015: {
@@ -103,11 +103,18 @@ import GCodeParser from './gcode.js';
 
       // draw engraved lines
       _lines.forEach(l => {
-        ctx.beginPath();
-        ctx.moveTo(convertX(l[0][0]), convertY(l[0][1]));
-        ctx.lineTo(convertX(l[1][0]), convertY(l[1][1]));
-        ctx.closePath();
-        ctx.stroke();
+        if(l.length > 1) {
+          ctx.beginPath();
+          for (let idx in l) {
+            let pos = l[idx];
+            if (idx === 0) {
+              ctx.moveTo(convertX(pos[0]), convertY(pos[1]));
+            } else {
+              ctx.lineTo(convertX(pos[0]), convertY(pos[1]));
+            }
+          }
+          ctx.stroke();
+        }
       });
 
       // draw laser spot
@@ -136,7 +143,8 @@ import GCodeParser from './gcode.js';
           _pos[0] = _dest[0];
           _pos[1] = _dest[1];
           if(_first) {
-            _lines[_lines.length-1][1] = [_pos[0], _pos[1]];
+            let line = _lines[_lines.length-1];
+            line[line.length-1] = [_pos[0], _pos[1]];
           }
           _dest = null;
           _cmd = null;
@@ -145,7 +153,8 @@ import GCodeParser from './gcode.js';
           _pos[0] += dx / steps;
           _pos[1] += dy / steps;
           if(_laser) {
-            _lines[_lines.length-1][1] = [_pos[0], _pos[1]];
+            let line = _lines[_lines.length-1];
+            line[line.length-1] = [_pos[0], _pos[1]];
           }
         }
         _first = false;
@@ -248,7 +257,7 @@ import GCodeParser from './gcode.js';
             _dest = [x2, y2];
             if(_laser) {
               _first = true;
-              _lines.push([ [_pos[0], _pos[1]], [_pos[0], _pos[1]] ]);
+              _lines[_lines.length - 1].push([_pos[0], _pos[1]]);
               if(_checkImage) { simulateLine(_pos, _dest, _checkImage); }
             }
           }
@@ -326,7 +335,7 @@ import GCodeParser from './gcode.js';
           _cmd = null;
           break;
         case 17:      // Select X-Y plane Rotation en Z;
-          console.info('Plan X-Y');
+          console.info('G17: Plan X-Y');
           break;
         case 18:      // Select Z-X plane;
         case 19:      // Select Z-Y plane;
@@ -390,9 +399,12 @@ import GCodeParser from './gcode.js';
       switch(_cmd.cmd.value) {
         case 3:       //  Spindle ON (CW Rotation)
           _laser = true;
+          _lines.push([[_pos[0], _pos[1]]]);
+          console.info('M03: Laser ON');
           break;
         case 5:       //  Spindle Stop
           _laser = false;
+          console.info('M03: Laser OFF');
           break;
         case 2:       //  End of Program
         case 30:
@@ -456,7 +468,6 @@ import GCodeParser from './gcode.js';
       if (_exercise) {
         const hex = await getHexHash('SHA-1');
         if(!_laser && hex === _exercise.hex) {
-          console.info('Ok !');
           document.getElementById('overlay').style.display = 'block';
           if(parent) {
             const answer = await getHexHash('SHA-256');
