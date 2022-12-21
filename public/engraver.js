@@ -1,9 +1,18 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.0.3';
+  const VERSION = 'v1.0.4';
 
   const engravers = {
+    DENER_FL_3015: {
+      height: 1530,         // mm
+      width: 3050,          // mm
+      focus: [0.1, 0.1],    // unknown
+      wavelength: 0,        // unknown
+      laserPower: 4000,     // 4000W
+      speed: 2400,          // max speed 170 m/dk
+      img: 'img/fl3015s.jpg'
+    },
     SCULPTFUN_S30PROMAX: {
       height: 935,          // mm
       width: 905,           // mm
@@ -12,18 +21,9 @@ import GCodeParser from './gcode.js';
       laserPower: 20,       // 20W,
       speed: 1200,          // max speed 1200 mm/min
       img: 'img/sculptfun_s30pro.webp'
-    },
-    LEGACY: {
-      height: 1530,         // mm
-      width: 3050,          // mm
-      focus: [0, 0],
-      wavelength: 0,
-      laserPower: 0,
-      speed: 1600,          // max speed 1600 mm/min
-      img: null
     }
   }
-  const engraver = engravers.SCULPTFUN_S30PROMAX;
+  const engraver = engravers.DENER_FL_3015;
 
   const SIM_R = Math.round(engraver.height / 500); // simulated area ratio
   const SIM_H = engraver.height / SIM_R;
