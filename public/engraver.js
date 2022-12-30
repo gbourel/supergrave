@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.2.0';
+  const VERSION = 'v1.2.1';
 
   const engravers = {
     DENER_FL_3015: {
@@ -31,7 +31,8 @@ import GCodeParser from './gcode.js';
 
   const DEFAULT_COMMANDS = [
     '%',
-    'G21 G90 (mm, absolu)',
+    'G21 (mm)',
+    'G90 (absolu)',
     '',
     'G00 X150.0 Y150.0',
     'M03',
