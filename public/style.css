@@ -40,6 +40,10 @@ h1 {
   font-variant: small-caps;
   letter-spacing: 0.1rem;
   color: #F2F2F2;
+  margin-bottom: 0;
+}
+header a {
+  color: #DEDEDE;
 }
 .logo {
   width: 2rem;
