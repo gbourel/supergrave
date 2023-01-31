@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.3.0';
+  const VERSION = 'v1.3.1';
 
   const engravers = {
     DENER_FL_3015: {
