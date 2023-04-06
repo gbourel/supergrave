@@ -635,6 +635,11 @@ import GCodeParser from './gcode.js';
     fetch('https://hitcounter.ileauxsciences.fr/hit/', {
       method: 'POST' });
   }
+  document.addEventListener('keydown', (event) => {
+    if(event.ctrlKey && event.key == "Enter") {
+      start();
+    }
+  });
 
   window.engraverStart = start;
   window.engraverStop = stop;
