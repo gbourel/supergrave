@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.3.1';
+  const VERSION = 'v1.3.2';
 
   const engravers = {
     DENER_FL_3015: {
@@ -483,7 +483,7 @@ import GCodeParser from './gcode.js';
             const answer = await getHexHash('SHA-256');
             parent.window.postMessage({
               'answer': answer,
-              'from': 'pix'
+              'from': 'nsix'
             }, '*');
           }
         }
@@ -586,13 +586,23 @@ import GCodeParser from './gcode.js';
   // define exercices
   _exercises['basic_square'] = {
     commands : [
-      'INIT',
-      'MOVE 200 200',
-      'LASER ON',
-      'MOVE 600 200',
-      'LASER OFF'
+      '%',
+      'G21 (mm)',
+      'G90 (absolu)',
+      'G00 X200.0 Y200.0',
+      'M03',
+      'G01 X600 Y200 F400',
+      'M05',
+      'M02',
+      '%'
+      // 'INIT',
+      // 'MOVE 200 200',
+      // 'LASER ON',
+      // 'MOVE 600 200',
+      // 'LASER OFF'
     ],
-    hex: '80bfa427dff9cb3f10cc1c260c9ad904aef4367d'
+    hex: '9d8b7f4be25c67ac370f1451bffe6f58ea6688d3'
+    // hex: '80bfa427dff9cb3f10cc1c260c9ad904aef4367d'
   };
 
   // if in iframe
