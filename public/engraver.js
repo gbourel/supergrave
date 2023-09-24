@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.3.2';
+  const VERSION = 'v1.3.3';
 
   const engravers = {
     DENER_FL_3015: {
@@ -476,13 +476,12 @@ import GCodeParser from './gcode.js';
       showStart();
       // Check exercise result on completion
       if (_exercise) {
-        const hex = await getHexHash('SHA-1');
+        const hex = await getHexHash('SHA-256');
         if(!_laser && hex === _exercise.hex) {
           document.getElementById('overlay').style.display = 'block';
           if(parent) {
-            const answer = await getHexHash('SHA-256');
             parent.window.postMessage({
-              'answer': answer,
+              'answer': hex,
               'from': 'nsix'
             }, '*');
           }
@@ -595,14 +594,8 @@ import GCodeParser from './gcode.js';
       'M05',
       'M02',
       '%'
-      // 'INIT',
-      // 'MOVE 200 200',
-      // 'LASER ON',
-      // 'MOVE 600 200',
-      // 'LASER OFF'
     ],
-    hex: '9d8b7f4be25c67ac370f1451bffe6f58ea6688d3'
-    // hex: '80bfa427dff9cb3f10cc1c260c9ad904aef4367d'
+    hex: 'dcebc65b022ce6df67fe3ef827b6ac671c36b3b3fd45e13b910d3d9fc6fa8758'
   };
 
   // if in iframe
