@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.3.3';
+  const VERSION = 'v1.3.4';
 
   const engravers = {
     DENER_FL_3015: {
@@ -34,16 +34,13 @@ import GCodeParser from './gcode.js';
     'G21 (mm)',
     'G90 (absolu)',
     '',
-    'G00 X150.0 Y150.0',
-    'M03',
-    'G01 X450 Y150 F400',
-    'G01 X450.0 Y650.0',
-    'M05',
-    'G04 P0.5',
-    'G91 (incrémental)',
-    'G00 X250.0 Y150.0',
+    'G0 X150.0 Y150.0',
+    'M3',
+    'G1 X450 Y150 F200',
+    'G1 X450.0 Y650.0',
+    'M5',
     '',
-    'M02',
+    'M2',
     '%'
   ];
 
@@ -230,6 +227,7 @@ import GCodeParser from './gcode.js';
         case 0:  // Rapid positionning
           _speed = engraver.speed;
         case 1:       // Linear interpolation using a feed rate;
+          // FIXME handle invalid syntax
           let x = _pos[0];
           let y = _pos[1];
           if('X' in _cmd.args) {
