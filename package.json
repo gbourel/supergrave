@@ -14,6 +14,8 @@
   "dependencies": {
   },
   "scripts": {
-    "deploy": "echo \"deploy\""
+    "deploy": "echo \"deploy\"",
+    "dev": "live-server --host=nsix.test --port=2942 public",
+    "start": "npm run dev"
   }
 }
