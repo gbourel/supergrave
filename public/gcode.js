@@ -7,6 +7,7 @@ const RE_COMMENT2 = /;.*/;
 const RE_CMD = /([GM])(\d\d?\d?)/;
 const RE_LINE = /N\d\d?/;
 const RE_ARGS = /([FIJLPRXYZ])(-?\d+(\.?\d+)?)/;
+const RE_INVALID_ARG = /\d+([FIJLPRXYZ])/;
 
 export default class GCodeParser {
 	constructor() {
@@ -70,8 +71,17 @@ export default class GCodeParser {
 								'variable': res[1],
 								'value': parseInt(res[2])
 							};
+						} else if ((res = RE_INVALID_ARG.exec(t)) !== null) {
+							debug('    err_arg', res);
+							this.error('Argument error', line);
+							this.instructions.push({
+								idx: lineIdx,
+								line: lineIdx,
+								cmd: null,
+								err: `Invalid argument: ${line}\nMissing space before ${res[1]} ?`
+							});
 						} else if ((res = RE_ARGS.exec(t)) !== null) {
-							debug('    args', res)
+							debug('    args', res);
 							instruction.args[res[1]] = parseFloat(res[2]);
 						} else if (RE_LINE.exec(t)) {
 							if(instruction.line) {

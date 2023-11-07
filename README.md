@@ -1,5 +1,7 @@
 # SuperGrave
 
+![Exemple](public/img/demo.png)
+
 Simulateur de graveur laser 2D.
 
 Les dimensions et paramètres sont basés sur les spécifications des modèles
@@ -13,6 +15,7 @@ Démo ici : <https://laser.nsix.fr/>
 Pour l'utilisation du G-Code, une très bonne explication ici : <http://linuxcnc.org/docs/html/gcode/gcode_fr.html>.
 
 ## Versions
+ * v1.4.0: ajout d'une vérification des paramètres GCode
  * v1.3.2: ajout raccourci CTRL+Enter
  * v1.0.3: plusieurs commandes par ligne acceptées.
  * v1.0.2: prise en compte des commandes G10 L2, G54 à G59.
