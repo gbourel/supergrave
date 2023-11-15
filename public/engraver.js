@@ -1,7 +1,7 @@
 import GCodeParser from './gcode.js';
 
 (function (){
-  const VERSION = 'v1.4.0';
+  const VERSION = 'v1.5.0';
 
   const engravers = {
     DENER_FL_3015: {
@@ -601,6 +601,28 @@ import GCodeParser from './gcode.js';
     let elt = document.getElementById('title-header');
     elt.style.display = 'none';
   }
+
+  // init crosshair
+  let demoElt = document.querySelector('div.content .demo');
+  let crosshair = demoElt.querySelector('#crosshair');
+  let xch = demoElt.querySelector('.x');
+  let ych = demoElt.querySelector('.y');
+  demoElt.addEventListener('mouseenter', () => {
+    crosshair.style.display = 'block';
+  });
+  demoElt.addEventListener('mouseleave', () => {
+    crosshair.style.display = 'none';
+  });
+  demoElt.addEventListener('mousemove', (evt) => {
+    let rect = demoElt.getBoundingClientRect();
+    let pos = _canvas.getBoundingClientRect();
+    let dx = evt.clientX - rect.x;
+    let dy = evt.clientY - rect.y;
+    ych.style.left = `${dx}px`;
+    xch.style.top = `${dy}px`;
+    ych.textContent = ` X: ${Math.round(engraver.width * (evt.clientX - pos.x)/pos.width)}`;
+    xch.textContent = ` Y: ${engraver.height - Math.round(engraver.height * (evt.clientY - pos.y)/pos.height)}`;
+  });
 
   loadCommands(DEFAULT_COMMANDS);
   // load program from URL if provided
